@@ -1,4 +1,20 @@
 
+# Eran Comments
+
+When checking the project make sure to do the following
+
+* Get the submodules (which are hosted in separate gits), by making this command
+
+git submodule update --init --recursive
+
+* Make sure that you have QT5 added to your path. On most OS X versions you will find it in:
+
+/usr/local/opt/qt5
+
+* Make sure you're getting WebRTC and that you're building in in Release mode
+
+* Make sure you're brewing OpenSSL
+
 # OBS-studio WebRTC
 
 This project is a fork of OBS-studio with support for WebRTC. WebRTC supports comes from the inclusion of the open source implementation from webrtc.org used (at least in part) by chrome, firefox, and safari.
