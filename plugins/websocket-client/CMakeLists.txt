@@ -16,18 +16,19 @@ include_directories(${LIBOBS_INCLUDE_DIRS})
 #------------------------------------------------------------------------
 # OpenSSL included in libwebrtc
 #
-find_package(libwebrtc 65 REQUIRED)
+# find_package(libwebrtc 65 REQUIRED)
 
 #------------------------------------------------------------------------
 # Asio
 #
 include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/third_party/asio/include )
+include_directories( /usr/local/opt/openssl@1.1/include)
 
 include_directories( ${CURL_INCLUDE_DIR} )
 
 # WebSocket
 #
-set( websocketclient_SOURCES 
+set( websocketclient_SOURCES
   JanusWebsocketClientImpl.cpp
   SpankChainWebsocketClientImpl.cpp
   MillicastWebsocketClientImpl.cpp
@@ -61,11 +62,11 @@ add_library( websocketclient SHARED
   if (WIN32)
     set (curl_path "${CURL_INCLUDE_DIR}/../bin/libcurl.lib")
   elseif (UNIX AND NOT APPLE)
-    set (curl_path "${CURL_INCLUDE_DIR}/../lib/libcurl.a")    
+    set (curl_path "${CURL_INCLUDE_DIR}/../lib/libcurl.a")
   elseif (APPLE)
     set (curl_path "/usr/lib/libcurl.dylib")
-  endif() 
-   
+  endif()
+
   target_link_libraries(websocketclient ${curl_path})
 
 # why ?
@@ -77,8 +78,10 @@ install_obs_plugin(websocketclient)
 
 if ( APPLE )
   target_link_libraries( websocketclient
-    /usr/local/lib/libssl.dylib
-    /usr/local/lib/libcrypto.dylib
+    /usr/local/opt/openssl@1.1/lib/libssl.1.1.dylib
+    /usr/local/opt/openssl@1.1/lib/libcrypto.1.1.dylib
+    # /usr/local/lib/libssl.dylib
+    # /usr/local/lib/libcrypto.dylib
   )
 endif()
 
@@ -108,19 +111,19 @@ if ( UNIX AND NOT APPLE )
     DESTINATION ${OBS_EXECUTABLE_DESTINATION} COMPONENT   Libraries )
 elseif ( APPLE )
   install(
-    FILES       ${libwebrtc_rootdir}/lib/libssl.a
+    FILES       /usr/local/opt/openssl@1.1/lib/libssl.a
     DESTINATION ${OBS_EXECUTABLE_DESTINATION} COMPONENT   Libraries )
   install(
-    FILES       ${libwebrtc_rootdir}/lib/libcrypto.a
+    FILES       /usr/local/opt/openssl@1.1/lib/libcrypto.a
     DESTINATION ${OBS_EXECUTABLE_DESTINATION} COMPONENT   Libraries )
   install(
-    FILES       ${libwebrtc_rootdir}/lib/libwebrtc.a
+    FILES       /Users/erankalmanson/dev/webrtc-checkout/src/out/Default/obj/libwebrtc.a
     DESTINATION ${OBS_EXECUTABLE_DESTINATION} COMPONENT   Libraries )
   install(
-    FILES       ${libwebrtc_rootdir}/lib/libssl.1.1.dylib
+    FILES       /usr/local/opt/openssl@1.1/lib/libssl.1.1.dylib
     DESTINATION ${OBS_EXECUTABLE_DESTINATION} COMPONENT   Libraries )
   install(
-    FILES       ${libwebrtc_rootdir}/lib/libcrypto.1.1.dylib
+    FILES       /usr/local/opt/openssl@1.1/lib/libcrypto.1.1.dylib
     DESTINATION ${OBS_EXECUTABLE_DESTINATION} COMPONENT   Libraries )
 else ( WIN32 )
   install(

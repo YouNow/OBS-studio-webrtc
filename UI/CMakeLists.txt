@@ -36,8 +36,9 @@ endif()
 
 find_package(Qt5 COMPONENTS Core Widgets ${FIND_MODE})
 set(WEBRTC_USE_FILE_INCLUDED 1)
-find_package(libwebrtc 65 REQUIRED)
-include ( "${libwebrtc_DIR}/libwebrtcConfigVersion.cmake" )
+# find_package(libwebrtc 65 REQUIRED)
+include_directories ( "/Users/erankalmanson/dev/webrtc-checkout/src" )
+include_directories ( "/Users/erankalmanson/dev/webrtc-checkout/src/third_party" )
 
 find_package(FFmpeg REQUIRED COMPONENTS avcodec avutil avformat)
 

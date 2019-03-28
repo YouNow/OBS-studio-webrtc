@@ -19,6 +19,16 @@ else()
   add_definitions(-DNO_CRYPTO)
 endif()
 
+# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fexceptions -frtti")
+
+include_directories("/Users/erankalmanson/dev/webrtc-checkout/src")
+include_directories("/Users/erankalmanson/dev/webrtc-checkout/src/third_party")
+include_directories("/Users/erankalmanson/dev/webrtc-checkout/src/third_party/abseil-cpp")
+include_directories("/Users/erankalmanson/dev/webrtc-checkout/src/third_party/libyuv/include")
+
+add_definitions(-DWEBRTC_MAC)
+add_definitions(-DWEBRTC_POSIX)
+
 # --- Find libwebrtc or fail early
 if( WIN32 )
   # NOTE ALEX: David claims that it does not work.
@@ -28,7 +38,9 @@ if( WIN32 )
   # specific case this is the right way to approach the problem.
   set(WEBRTC_USE_FILE_INCLUDED 0)
 endif()
-find_package(libwebrtc 65 REQUIRED)
+#find_package(libwebrtc 65 REQUIRED)
+
+
 
 if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/ftl-sdk/CMakeLists.txt")
   find_package(Libcurl REQUIRED)
@@ -91,7 +103,7 @@ configure_file(
 include_directories("${CMAKE_BINARY_DIR}/plugins/obs-outputs/config")
 
 if(WIN32)
-  set( obs-outputs_PLATFORM_DEPS  
+  set( obs-outputs_PLATFORM_DEPS
     ${WEBRTC_LIBRARIES}
     ws2_32
     winmm
@@ -100,8 +112,36 @@ if(WIN32)
   if(MSVC)
     set( obs-outputs_PLATFORM_DEPS ${obs-outputs_PLATFORM_DEPS} w32-pthreads )
   endif()
-  elseif( APPLE )
-    set( obs-outputs_PLATFORM_DEPS ${WEBRTC_LIBRARIES} )
+elseif( APPLE )
+  find_library(FOUNDATION_FRAMEWORK Foundation)
+  find_library(AVFOUNDATION AVFoundation)
+  find_library(SECURITY_FRAMEWORK Security)
+  find_library(COCOA Cocoa)
+  # find_library(COREFOUNDATION CoreFoundation)
+  find_library(AUDIOUNIT AudioUnit)
+  find_library(AUDIOTOOLBOX AudioToolbox)
+  find_library(COREMEDIA CoreMedia)
+  find_library(COREVIDEO CoreVideo)
+  find_library(COREAUDIO CoreAudio)
+  find_library(COCOA Cocoa)
+  find_library(COREMEDIAIO CoreMediaIO)
+
+  include_directories(${AVFOUNDATION})
+
+  set( obs-outputs_PLATFORM_DEPS
+    ${AVFOUNDATION}
+    ${COCOA}
+    # ${CORESERVICE}
+  	${COREFOUNDATION}
+    ${AUDIOUNIT}
+    ${AUDIOTOOLBOX}
+  	${COREMEDIA}
+  	${COREVIDEO}
+    ${COREAUDIO}
+    ${COREMEDIAIO}
+    ${FOUNDATION_FRAMEWORK}
+	  ${SECURITY_FRAMEWORK}
+    /Users/erankalmanson/dev/webrtc-checkout/src/out/Default/obj/libwebrtc.a )
 endif()
 
 set(obs-outputs_librtmp_HEADERS
@@ -116,7 +156,7 @@ set(obs-outputs_librtmp_HEADERS
   librtmp/md5.h
   librtmp/rtmp.h
   librtmp/rtmp_sys.h)
-  
+
 set(obs-outputs_librtmp_SOURCES
   librtmp/amf.c
   librtmp/cencode.c
@@ -170,6 +210,16 @@ add_library( obs-outputs MODULE
 target_link_libraries( obs-outputs
   ${SSL_LIBRARIES}
   ${ZLIB_LIBRARIES}
+  ${AVFOUNDATION}
+  ${COCOA}
+  # ${CORESERVICE}
+	${COREFOUNDATION}
+  ${AUDIOUNIT}
+  ${AUDIOTOOLBOX}
+	${COREMEDIA}
+	${COREVIDEO}
+  ${COREAUDIO}
+	${COREMEDIAIO}
   ${obs-outputs_PLATFORM_DEPS}
   libobs
   websocketclient
