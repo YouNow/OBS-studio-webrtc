@@ -45,7 +45,8 @@ public:
   enum Type {
     Janus      = 0,
     SpankChain = 1,
-    Millicast  = 2
+    Millicast  = 2,
+    YouNow  = 3
   };
 public:
   WebRTCStream(obs_output_t *output);

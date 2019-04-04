@@ -199,6 +199,10 @@ void AutoConfigTestPage::TestBandwidthThread()
 		case 4: serverType = "webrtc_millicast";
 			break;
 
+		case 5: serverType = "webrtc_younow";
+			blog(LOG_WARNING, "AutoConfigTestPage::TestBandwidthThread - webrtc_younow has been selected");
+			break;
+
 		default: blog(LOG_WARNING, "serverType does not exist");
 			break;
 	}
@@ -977,6 +981,10 @@ void AutoConfigTestPage::FinalizeResults()
 				break;
 
 			case 4: serverType = "webrtc_millicast";
+				break;
+
+			case 5: serverType = "webrtc_younow";
+				blog(LOG_WARNING, "AutoConfigTestPage::FinalizeResults - webrtc_younow has been selected");
 				break;
 
 			default: blog(LOG_WARNING, "serverType does not exist");

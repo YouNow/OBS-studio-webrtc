@@ -19,6 +19,7 @@ extern struct obs_service_info rtmp_custom_service;
 extern struct obs_service_info webrtc_janus_service;
 extern struct obs_service_info webrtc_spankchain_service;
 extern struct obs_service_info webrtc_millicast_service;
+extern struct obs_service_info younow_service;
 
 static update_info_t *update_info = NULL;
 static struct dstr module_name = {0};
@@ -104,6 +105,7 @@ bool obs_module_load(void)
 	obs_register_service(&webrtc_janus_service);
 	obs_register_service(&webrtc_spankchain_service);
 	obs_register_service(&webrtc_millicast_service);
+	obs_register_service(&younow_service);
 	return true;
 }
 

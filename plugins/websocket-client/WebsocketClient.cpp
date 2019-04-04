@@ -3,6 +3,7 @@
 #include "JanusWebsocketClientImpl.h"
 #include "SpankChainWebsocketClientImpl.h"
 #include "MillicastWebsocketClientImpl.h"
+#include "YouNowWebsocketClientImpl.h"
 
 OBS_DECLARE_MODULE()
 
@@ -20,5 +21,7 @@ WEBSOCKETCLIENT_API WebsocketClient* createWebsocketClient(int type)
     return new SpankChainWebsocketClientImpl();
   if (type == WEBSOCKETCLIENT_MILLICAST)
     return new MillicastWebsocketClientImpl();
+  if (type == WEBSOCKETCLIENT_YOUNOW)
+    return new YouNowWebsocketClientImpl();
   return nullptr;
 }

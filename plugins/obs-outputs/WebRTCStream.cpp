@@ -135,7 +135,14 @@ bool WebRTCStream::start(Type type)
         milliId = (NULL == tmpString ? "" : tmpString);
         milliToken = (NULL == tmpToken ? "" : tmpToken);
 
-    } else{
+    } else if (type == WebRTCStream::YouNow){
+        info("WebRTCStream::start: YouNow has been selected");
+
+        tmpString = obs_service_get_milli_id(service);
+        tmpToken = obs_service_get_milli_token(service);
+        milliId = (NULL == tmpString ? "" : tmpString);
+        milliToken = (NULL == tmpToken ? "" : tmpToken);
+    } else {
         tmpString = obs_service_get_username(service);
         username = (NULL == tmpString ? "" : tmpString);
         tmpString = obs_service_get_password(service);
@@ -258,7 +265,21 @@ bool WebRTCStream::start(Type type)
     //Log them
     //If not millicast
     if (type == WebRTCStream::Millicast){
-         if(milliToken == "" || milliId == ""){
+        if(milliToken == "" || milliId == ""){
+            error("Invalid token or publishing name");
+            obs_output_signal_stop(output, OBS_OUTPUT_CONNECT_FAILED);
+            return false;
+        }
+        info("connecting to [url:%s,stream Id :%s,token :%s]", url.c_str(), milliId.c_str(), milliToken.c_str());
+        if(!client->connect(url, room, username, milliToken , this)){
+            //Error
+            obs_output_signal_stop(output, OBS_OUTPUT_CONNECT_FAILED);
+            return false;
+        };
+    } else if (type == WebRTCStream::YouNow){
+        info("WebRTCStream::start - YouNow selected");
+
+        if(milliToken == "" || milliId == ""){
             error("Invalid token or publishing name");
             obs_output_signal_stop(output, OBS_OUTPUT_CONNECT_FAILED);
             return false;

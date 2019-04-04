@@ -223,6 +223,7 @@ AutoConfigStreamPage::AutoConfigStreamPage(QWidget *parent)
 	ui->streamType->addItem(obs_service_get_display_name("webrtc_janus"));
 	ui->streamType->addItem(obs_service_get_display_name("webrtc_spankchain"));
 	ui->streamType->addItem(obs_service_get_display_name("webrtc_millicast"));
+	ui->streamType->addItem(obs_service_get_display_name("webrtc_younow"));
 
 	setTitle(QTStr("Basic.AutoConfig.StreamPage"));
 	setSubTitle(QTStr("Basic.AutoConfig.StreamPage.SubTitle"));
@@ -296,6 +297,9 @@ bool AutoConfigStreamPage::validatePage()
 			break;
 
 		case 4: serverType = "webrtc_millicast";
+			break;
+		
+		case 5: serverType = "webrtc_younow";
 			break;
 
 		default:blog(LOG_ERROR, "streamType do not exist");
@@ -455,6 +459,22 @@ void AutoConfigStreamPage::ServiceChanged()
 		ui->streamKeyLabel->setVisible(true);
 		ui->key->setVisible(true);
 		ui->show->setVisible(true);
+	
+	} else if (ui->streamType->currentIndex() == 5)	{ //webrtc_younow
+		blog(LOG_WARNING, "AutoConfigStreamPage::ServiceChanged - webrtc_younow has been selected");
+
+		ui->formLayout->insertRow(1, ui->serverLabel,
+					  ui->serverStackedWidget);
+
+		ui->region->setVisible(false);
+		ui->serverStackedWidget->setCurrentIndex(1);
+		ui->serverStackedWidget->setVisible(true);
+		ui->serverLabel->setVisible(true);
+
+		ui->streamKeyLabel->setVisible(true);
+		ui->key->setVisible(true);
+		ui->show->setVisible(true);
+
 	} else { //common currentIndex == 0
 		ui->formLayout->insertRow(1, ui->serviceLabel, ui->service);
 
@@ -691,6 +711,8 @@ AutoConfig::AutoConfig(QWidget *parent)
 		customServer = 3;
 	} else if (serviceType.compare("webrtc_millicast") == 0) {
 		customServer = 4;
+	} else if (serviceType.compare("webrtc_younow") == 0) {
+		customServer = 5;
 	} else {
 		blog(LOG_ERROR, "streamType do not exist");
 	}
@@ -868,6 +890,9 @@ void AutoConfig::SaveStreamSettings()
 		case 3: service_id = "webrtc_spankchain";
 			break;
 		case 4: service_id = "webrtc_millicast";
+			break;
+		case 5: service_id = "webrtc_younow";
+			blog(LOG_WARNING, "AutoConfig::SaveStreamSettings - webrtc_younow has been selected");
 			break;
 		default: blog(LOG_ERROR, "streamType do not exist");
 			break;

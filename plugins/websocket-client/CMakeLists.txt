@@ -32,6 +32,7 @@ set( websocketclient_SOURCES
   JanusWebsocketClientImpl.cpp
   SpankChainWebsocketClientImpl.cpp
   MillicastWebsocketClientImpl.cpp
+  YouNowWebsocketClientImpl.cpp
   WebsocketClient.cpp
   restclient-cpp/source/connection.cc
   restclient-cpp/source/helpers.cc
@@ -49,6 +50,7 @@ set( websocketclient_HEADERS
   JanusWebsocketClientImpl.h
   SpankChainWebsocketClientImpl.h
   MillicastWebsocketClientImpl.h
+  YouNowWebsocketClientImpl.h
   WebsocketClient.h
   )
 

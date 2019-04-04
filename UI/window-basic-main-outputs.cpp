@@ -661,6 +661,9 @@ bool SimpleOutput::StartStreaming(obs_service_t *service)
 			type = "spankchain_output";
 		} else if (typeCheck.find("millicast") != std::string::npos) {
 			type = "millicast_output";
+		} else if (typeCheck.find("younow") != std::string::npos) {
+			blog(LOG_WARNING, "windows-basic-main-outputs.cpp: younow_ouput type selected in SimpleOutput::StartStreaming");
+			type = "younow_output";
 		} else {
 			type = "rtmp_output";
 		}
@@ -1435,6 +1438,9 @@ bool AdvancedOutput::StartStreaming(obs_service_t *service)
 			type = "spankchain_output";
 		} else if (typeCheck.find("millicast") != std::string::npos) {
 			type = "millicast_output";
+		} else if (typeCheck.find("younow") != std::string::npos) {
+			blog(LOG_WARNING, "windows-basic-main-outputs.cpp: younow_ouput type selected in AdvancedOutput::StartStreaming");
+			type = "younow_output";
 		} else {
 			type = "rtmp_output";
 		}
