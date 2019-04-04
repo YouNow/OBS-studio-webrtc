@@ -21,7 +21,7 @@
 #define WEBSOCKETCLIENT_JANUS      0
 #define WEBSOCKETCLIENT_SPANKCHAIN 1
 #define WEBSOCKETCLIENT_MILLICAST  2
-#define WEBSOCKETCLIENT_YOUNOW  2
+#define WEBSOCKETCLIENT_YOUNOW  3
 
 class WEBSOCKETCLIENT_API WebsocketClient
 {
@@ -35,6 +35,7 @@ public:
     virtual void onOpened(const std::string &sdp) = 0;
     virtual void onOpenedError(int code) = 0;
     virtual void onDisconnected() = 0;
+    virtual void onIceCandidateReceived(const std::string &sdp_mid, const int sdp_midlineindex, const std::string &sdp) = 0;
   };
 public:
   virtual bool connect(std::string url, long long room, std::string username, std::string token, Listener* listener) = 0;

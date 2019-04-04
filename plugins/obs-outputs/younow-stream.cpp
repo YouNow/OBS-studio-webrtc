@@ -72,7 +72,7 @@ extern "C" bool younow_stream_start(void *data)
   //Don't allow it to be deleted
   stream->AddRef();
   //Start it
-  return stream->start(WebRTCStream::Millicast);
+  return stream->start(WebRTCStream::YouNow);
 }
 
 extern "C" void younow_receive_video(void *data, struct video_data *frame)

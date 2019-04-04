@@ -223,7 +223,7 @@ AutoConfigStreamPage::AutoConfigStreamPage(QWidget *parent)
 	ui->streamType->addItem(obs_service_get_display_name("webrtc_janus"));
 	ui->streamType->addItem(obs_service_get_display_name("webrtc_spankchain"));
 	ui->streamType->addItem(obs_service_get_display_name("webrtc_millicast"));
-	ui->streamType->addItem(obs_service_get_display_name("webrtc_younow"));
+	ui->streamType->addItem(obs_service_get_display_name("younow"));
 
 	setTitle(QTStr("Basic.AutoConfig.StreamPage"));
 	setSubTitle(QTStr("Basic.AutoConfig.StreamPage.SubTitle"));
@@ -299,7 +299,7 @@ bool AutoConfigStreamPage::validatePage()
 		case 4: serverType = "webrtc_millicast";
 			break;
 		
-		case 5: serverType = "webrtc_younow";
+		case 5: serverType = "younow";
 			break;
 
 		default:blog(LOG_ERROR, "streamType do not exist");
@@ -460,7 +460,7 @@ void AutoConfigStreamPage::ServiceChanged()
 		ui->key->setVisible(true);
 		ui->show->setVisible(true);
 	
-	} else if (ui->streamType->currentIndex() == 5)	{ //webrtc_younow
+	} else if (ui->streamType->currentIndex() == 5)	{ //younow
 		blog(LOG_WARNING, "AutoConfigStreamPage::ServiceChanged - webrtc_younow has been selected");
 
 		ui->formLayout->insertRow(1, ui->serverLabel,
@@ -711,7 +711,7 @@ AutoConfig::AutoConfig(QWidget *parent)
 		customServer = 3;
 	} else if (serviceType.compare("webrtc_millicast") == 0) {
 		customServer = 4;
-	} else if (serviceType.compare("webrtc_younow") == 0) {
+	} else if (serviceType.compare("younow") == 0) {
 		customServer = 5;
 	} else {
 		blog(LOG_ERROR, "streamType do not exist");
@@ -891,7 +891,7 @@ void AutoConfig::SaveStreamSettings()
 			break;
 		case 4: service_id = "webrtc_millicast";
 			break;
-		case 5: service_id = "webrtc_younow";
+		case 5: service_id = "younow";
 			blog(LOG_WARNING, "AutoConfig::SaveStreamSettings - webrtc_younow has been selected");
 			break;
 		default: blog(LOG_ERROR, "streamType do not exist");

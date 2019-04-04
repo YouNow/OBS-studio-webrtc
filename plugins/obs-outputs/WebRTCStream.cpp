@@ -136,7 +136,7 @@ bool WebRTCStream::start(Type type)
         milliToken = (NULL == tmpToken ? "" : tmpToken);
 
     } else if (type == WebRTCStream::YouNow){
-        info("WebRTCStream::start: YouNow has been selected");
+        info("info: WebRTCStream::start: YouNow has been selected");
 
         tmpString = obs_service_get_milli_id(service);
         tmpToken = obs_service_get_milli_token(service);
@@ -277,14 +277,17 @@ bool WebRTCStream::start(Type type)
             return false;
         };
     } else if (type == WebRTCStream::YouNow){
-        info("WebRTCStream::start - YouNow selected");
+        info("info: WebRTCStream::start: Verifying Token");
 
-        if(milliToken == "" || milliId == ""){
+        if(milliToken == ""){
             error("Invalid token or publishing name");
             obs_output_signal_stop(output, OBS_OUTPUT_CONNECT_FAILED);
             return false;
         }
-        info("connecting to [url:%s,stream Id :%s,token :%s]", url.c_str(), milliId.c_str(), milliToken.c_str());
+        
+        info("info: WebRTCStream::start: Token verified");
+
+        info("info: WebRTCStream::start:connecting to [url:%s, token :%s]", url.c_str(), milliToken.c_str());
         if(!client->connect(url, room, username, milliToken , this)){
             //Error
             obs_output_signal_stop(output, OBS_OUTPUT_CONNECT_FAILED);
@@ -292,7 +295,7 @@ bool WebRTCStream::start(Type type)
         };
     }
     else{
-        info("connecting to [url:%s,room:%lld,username:%s,password:%s]", url.c_str(), room, username.c_str(), password.c_str());
+        info("info: connecting to [url:%s,room:%lld,username:%s,password:%s]", url.c_str(), room, username.c_str(), password.c_str());
         if(!client->connect(url, room, username, password , this)){
             //Error
             obs_output_signal_stop(output, OBS_OUTPUT_CONNECT_FAILED);
@@ -309,7 +312,7 @@ void WebRTCStream::OnSuccess(webrtc::SessionDescriptionInterface * desc)
     //Serialize sdp to string
     desc->ToString(&sdp);
     //Got offer
-    info("Got offer\r\n%s", sdp.c_str());
+    info("WebRTCStream::OnSuccess: Got offer\r\n%s", sdp.c_str());
     //Set local description
     pc->SetLocalDescription(this, desc);
     //Send SDP
@@ -341,6 +344,18 @@ void WebRTCStream::OnIceCandidate(const webrtc::IceCandidateInterface* candidate
     //Trickle
     client->trickle(candidate->sdp_mid(), candidate->sdp_mline_index(), str, false);
 };
+
+void WebRTCStream::onIceCandidateReceived(const std::string &sdp_mid, const int sdp_midlineindex, const std::string &sdp) {
+    std::unique_ptr<webrtc::IceCandidateInterface> candidate(webrtc::CreateIceCandidate(sdp_mid, sdp_midlineindex, sdp, nullptr));
+        
+    if (!candidate.get()) {
+        info("can't parse received candidate message");
+        return;
+    }
+
+    info("Adding ICE candidate to Peer Connection");
+    pc->AddIceCandidate(candidate.get());
+}
 
 bool WebRTCStream::stop()
 {

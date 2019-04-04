@@ -1,13 +1,20 @@
 #include "YouNowWebsocketClientImpl.h"
 #include "json.hpp"
+#include <uuid/uuid.h>
 
 using json = nlohmann::json;
 
 typedef websocketpp::config::asio_client::message_type::ptr message_ptr;
 
-YouNowWebsocketClientImpl::
-    YouNowWebsocketClientImpl()
+YouNowWebsocketClientImpl::YouNowWebsocketClientImpl()
 {
+  // generate peerId
+  uuid_t uuid;
+  uuid_generate_time(uuid);
+  char uuid_str[37];
+  uuid_unparse_lower(uuid, uuid_str);
+  peerId = uuid_str;
+
   // Set logging to be pretty verbose (everything except message payloads)
   client.set_access_channels(websocketpp::log::alevel::all);
   client.clear_access_channels(websocketpp::log::alevel::frame_payload);
@@ -15,10 +22,11 @@ YouNowWebsocketClientImpl::
 
   // Initialize ASIO
   client.init_asio();
+
+
 }
 
-YouNowWebsocketClientImpl::
-    ~YouNowWebsocketClientImpl()
+YouNowWebsocketClientImpl::~YouNowWebsocketClientImpl()
 {
   // Disconnect just in case
   disconnect(false);
@@ -49,19 +57,28 @@ bool YouNowWebsocketClientImpl::connect(std::string url, long long room, std::st
     });
     // remove space in the token
     token.erase(remove_if(token.begin(), token.end(), isspace), token.end());
-    std::string wss = url + "?token=" + token;
+
+    streamKey = token;
+
+    std::string signaling_url = "wss://signaling.younow-play.video.propsproject.com";
+
+    std::string wss = signaling_url + "/?peerId=" + peerId + "&streamKey=" + token;
 
     // Create websocket connection and add token and callback parameters
-    std::cout << " Connection URL: " << wss << std::endl;
+    std::cout << "YouNowWebsocketClientImpl::connect: Connection URL: " << wss << std::endl;
 
     // Get connection
     this->connection = client.get_connection(wss, ec);
 
+    std::cout << "YouNowWebsocketClientImpl::connect: get_connection called" << std::endl;
+
     if (!this->connection)
     {
       std::cout << "Print NOT NULLL" << std::endl;
+      connection->set_close_handshake_timeout(5000);
+    } else {
+      std::cout << "YouNowWebsocketClientImpl::connection is null" << std::endl;;
     }
-    connection->set_close_handshake_timeout(5000);
 
     if (ec)
     {
@@ -76,52 +93,54 @@ bool YouNowWebsocketClientImpl::connect(std::string url, long long room, std::st
       std::cout << "msg received: " << msg << std::endl;
 
       // If there is no type, do nothing and get out of here
-      if (msg.find("type") == msg.end())
-        return;
+      if (msg.find("authKey") != msg.end()) {
+        // received an auth message
+        std::cout << "YouNowWebsocketClientImpl.cpp: Processing an Auth message" << std::endl;
 
-      std::string type = msg["type"];
-
-      // If we're not dealing with a response, then act on it
-      if (type.compare("response") == 0)
-      {
-        // If there is no transId, do nothing and get out of here
-        if (msg.find("transId") == msg.end())
-          return;
-
-        // If there is no data, do nothing and get out of here
-        if (msg.find("data") == msg.end())
-        {
-          return;
+        authKey = msg["authKey"];
+        if (msg.find("roomId") != msg.end()) {
+          roomId = msg["roomId"];
         }
 
-        // Get the Data session
-        auto data = msg["data"];
+        return;
+      } else if (msg.find("sdp") != msg.end()) {
+        // received a sdp message
+        std::cout << "YouNowWebsocketClientImpl.cpp: Processing an SDP message" << std::endl;
 
-        // Get response data
-        std::string sdp = data["sdp"];
-        std::string feedId = data["feedId"];
+        auto sdpMsg = msg["sdp"];
 
-        //Event
-        listener->onOpened(sdp);
+        if ((sdpMsg.find("sdp") != sdpMsg.end()) && (sdpMsg.find("type") != sdpMsg.end())) {
+          
+          // send the sdp we received, and set as remote
+          std::string sdp = sdpMsg["sdp"];
+          listener->onOpened(sdp);
 
-        //Keep the connection alive
-        is_running.store(true);
+          //Keep the connection alive
+          is_running.store(true);
+          
+        }
+      } else if (msg.find("ice") != msg.end()) {
+        std::cout << "YouNowWebsocketClientImpl.cpp: Processing an ICE message" << std::endl;
+
+        auto iceMsg = msg["ice"];
+        std::string sdp = iceMsg["candidate"];
+        std::string sdp_mid = iceMsg["sdpMid"];
+        int sdp_mlineindex = iceMsg["sdpMLineIndex"];
+
+        // listener->onIceCandidateReceived(sdp_mid, sdp_mlineindex, sdp);
       }
-      // If error message
-      if (type.compare("error") == 0)
-      {
-        listener->onDisconnected();
-      }
+      return;
     });
 
     // When we are open
     connection->set_open_handler([=](websocketpp::connection_hdl con) {
       // Launch event
       listener->onConnected();
-      std::cout << "> Error ON Disconnect close: " << ec.message() << std::endl;
+      // std::cout << "> Error ON Disconnect close: " << ec.message() << std::endl;
 
       // And logged
       listener->onLogged(0);
+
     });
 
     // Set close hanlder
@@ -172,37 +191,70 @@ bool YouNowWebsocketClientImpl::connect(std::string url, long long room, std::st
 
 bool YouNowWebsocketClientImpl::open(const std::string &sdp, const std::string &codec, const std::string &milliId)
 {
-  std::cout << "WS-OPEN: milliId: " << milliId << std::endl;
+  if (sdp == "") {
+    // sending join command
+    try {
 
-  try
-  {
-    // Login command
-    json open = {
-        {"type", "cmd"},
-        {"name", "publish"},
-        {"transId", 0},
-        {"data",
-         {
-             {"streamId", milliId},
-             {"name", milliId},
-             {"sdp", sdp},
-             {"codec", codec},
-         }}};
-    // Serialize and send
-    if (connection->send(open.dump()))
+      std::cout << "YouNowWebsocketClientImpl::open: Sending join command" << std::endl;
+      // Login command
+      json open = {
+          {"peerId", peerId},
+          {"userId", "746521"},
+          {"streamKey", streamKey},
+          {"applicationId", "OBS"},
+          {"sdkVersion", "0.0.1"},
+          {"device", "OBS"},
+          {"os", "Mac"},
+          {"sdp", sdp}
+      };
+
+      // Serialize and send
+      if (connection->send(open.dump()))
+        return false;
+    }
+    catch (websocketpp::exception const &e)
+    {
+      std::cout << e.what() << std::endl;
       return false;
-  }
-  catch (websocketpp::exception const &e)
-  {
-    std::cout << e.what() << std::endl;
-    return false;
-  }
+    }
+  } 
 
   return true;
 }
 
 bool YouNowWebsocketClientImpl::trickle(const std::string &mid, int index, const std::string &candidate, bool last)
 {
+  try {
+
+    std::cout << "YouNowWebsocketClientImpl::trickle: Got a trickle message with this candidate: " + candidate << std::endl; 
+    // Login command
+    json open = {
+        {
+          {"authKey", authKey},
+          {"roomId", roomId},
+          {"peerId", peerId},
+          {"userId", "746521"},
+            "ice",
+              {
+                {"candidate", candidate},
+                {"sdpMLineIndex", index},
+                {"sdpMid", mid}
+              }
+        }
+    };
+
+    // Serialize and send
+    if (connection->send(open.dump()))
+      return false;
+
+    std::cout << "YouNowWebsocketClientImpl::trickle: Trickle candidate sent" << std::endl; 
+  }
+  catch (websocketpp::exception const &e)
+  {
+    std::cout << e.what() << std::endl;
+    return false;
+  }
+  
   return true;
 }
 

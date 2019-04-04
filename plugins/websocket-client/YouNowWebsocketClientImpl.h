@@ -19,24 +19,9 @@ class YouNowWebsocketClientImpl : public WebsocketClient
 public:
     YouNowWebsocketClientImpl();
     ~YouNowWebsocketClientImpl();
-    virtual bool connect(
-      std::string url,
-      long long room,
-      std::string username,
-      std::string token,
-      WebsocketClient::Listener* listener
-    );
-    virtual bool open(
-      const std::string &sdp,
-      const std::string& codec = "h264",
-      const std::string& milliId = ""
-    );
-    virtual bool trickle(
-      const std::string &mid,
-      int index,
-      const std::string &candidate,
-      bool last
-    );
+    virtual bool connect(std::string url, long long room, std::string username, std::string token, WebsocketClient::Listener* listener);
+    virtual bool open(const std::string &sdp, const std::string& codec = "h264", const std::string& milliId = "");
+    virtual bool trickle(const std::string &mid, int index, const std::string &candidate, bool last);
     virtual bool disconnect(bool wait);
 
 private:
@@ -50,5 +35,10 @@ private:
    
     Client client;
     Client::connection_ptr connection;
+
+    std::string peerId;
+    std::string roomId;
+    std::string streamKey;
+    std::string authKey;
 };
 
