@@ -12,6 +12,7 @@
 #include "websocketpp/config/asio_client.hpp"
 #include "websocketpp/client.hpp"
 
+
 typedef websocketpp::client<websocketpp::config::asio_tls_client> Client;
 
 class YouNowWebsocketClientImpl : public WebsocketClient
@@ -40,5 +41,8 @@ private:
     std::string roomId;
     std::string streamKey;
     std::string authKey;
+
+    std::string CreateRandomString(size_t length);
+    
 };
 

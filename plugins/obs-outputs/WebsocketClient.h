@@ -29,6 +29,8 @@ public:
     virtual void onOpened(const std::string &sdp) = 0;
     virtual void onOpenedError(int code) = 0;
     virtual void onDisconnected() = 0;
+    virtual void onIceCandidateReceived(const std::string &sdp_mid, const int sdp_midlineindex, const std::string &sdp) = 0;
+
   };
 public:
   virtual bool connect(std::string url, long long room, std::string username, std::string token, Listener* listener) = 0;

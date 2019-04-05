@@ -1,6 +1,5 @@
 #include "YouNowWebsocketClientImpl.h"
 #include "json.hpp"
-#include <uuid/uuid.h>
 
 using json = nlohmann::json;
 
@@ -9,11 +8,7 @@ typedef websocketpp::config::asio_client::message_type::ptr message_ptr;
 YouNowWebsocketClientImpl::YouNowWebsocketClientImpl()
 {
   // generate peerId
-  uuid_t uuid;
-  uuid_generate_time(uuid);
-  char uuid_str[37];
-  uuid_unparse_lower(uuid, uuid_str);
-  peerId = uuid_str;
+  peerId = YouNowWebsocketClientImpl::CreateRandomString(16);
 
   // Set logging to be pretty verbose (everything except message payloads)
   client.set_access_channels(websocketpp::log::alevel::all);
@@ -22,8 +17,6 @@ YouNowWebsocketClientImpl::YouNowWebsocketClientImpl()
 
   // Initialize ASIO
   client.init_asio();
-
-
 }
 
 YouNowWebsocketClientImpl::~YouNowWebsocketClientImpl()
@@ -127,8 +120,11 @@ bool YouNowWebsocketClientImpl::connect(std::string url, long long room, std::st
 
         auto iceMsg = msg["ice"];
         std::string sdp = iceMsg["candidate"];
+        std::cout << "YouNowWebsocketClientImpl.cpp: Processing an ICE message - candidate: " << sdp << std::endl;
         std::string sdp_mid = iceMsg["sdpMid"];
+        std::cout << "YouNowWebsocketClientImpl.cpp: Processing an ICE message - sdp_mid: " << sdp_mid << std::endl;
         int sdp_mlineindex = iceMsg["sdpMLineIndex"];
+        std::cout << "YouNowWebsocketClientImpl.cpp: Processing an ICE message - sdp_mlineindex: " << sdp_mlineindex << std::endl;
 
         listener->onIceCandidateReceived(sdp_mid, sdp_mlineindex, sdp);
       }
@@ -221,6 +217,7 @@ bool YouNowWebsocketClientImpl::open(const std::string &sdp, const std::string &
         {"userId", "746521"},
         {"streamKey", streamKey},
         {"preJoin", true},
+        {"maxBw", 2500},
         {"applicationId", "OBS"},
         {"sdkVersion", "0.0.1"},
         {"device", "OBS"},
@@ -246,7 +243,7 @@ bool YouNowWebsocketClientImpl::trickle(const std::string &mid, int index, const
 {
   try {
 
-    std::cout << "YouNowWebsocketClientImpl::trickle: Got a trickle message with this candidate: " + candidate << std::endl; 
+    // std::cout << "YouNowWebsocketClientImpl::trickle: Got a trickle message with this candidate: " + candidate << std::endl; 
     // Login command
     json open = {
         {"authKey", authKey},
@@ -266,13 +263,13 @@ bool YouNowWebsocketClientImpl::trickle(const std::string &mid, int index, const
         {"os", "Mac"}
     };
 
-    std::cout << "YouNowWebsocketClientImpl::trickle: Command: " << open << std::endl;
+    // std::cout << "YouNowWebsocketClientImpl::trickle: Command: " << open << std::endl;
 
     // Serialize and send
     if (connection->send(open.dump()))
       return false;
 
-    std::cout << "YouNowWebsocketClientImpl::trickle: Trickle candidate sent" << std::endl; 
+    // std::cout << "YouNowWebsocketClientImpl::trickle: Trickle candidate sent" << std::endl; 
   }
   catch (websocketpp::exception const &e)
   {
@@ -321,3 +318,20 @@ bool YouNowWebsocketClientImpl::disconnect(bool wait)
 
   return true;
 }
+
+std::string YouNowWebsocketClientImpl::CreateRandomString(size_t length) {
+  auto randchar = []() -> char
+    {
+        const char charset[] =
+        "0123456789"
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        "abcdefghijklmnopqrstuvwxyz";
+        const size_t max_index = (sizeof(charset) - 1);
+        return charset[ rand() % max_index ];
+    };
+    std::string str(length,0);
+    std::generate_n( str.begin(), length, randchar );
+    return str;
+}
+
+

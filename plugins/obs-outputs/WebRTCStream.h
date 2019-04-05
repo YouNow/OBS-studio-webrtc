@@ -78,7 +78,7 @@ public:
   virtual void onOpened(const std::string &sdp);
   virtual void onOpenedError(int code);
   virtual void onDisconnected();
-  virtual void onIceCandidateReceived(const std::string &sdp_mid, const int sdp_midlineindex, const std::string &sdp);
+  virtual void onIceCandidateReceived(const std::string &sdp_mid, int sdp_midlineindex, const std::string &sdp);
 
   //
   // PeerConnectionObserver implementation.

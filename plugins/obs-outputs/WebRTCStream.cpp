@@ -165,7 +165,8 @@ bool WebRTCStream::start(Type type)
     if (!obs_service_get_codec(service))
         codec = "h264";
     else
-	    codec = obs_service_get_codec(service);
+	    codec = "h264";
+        //codec = obs_service_get_codec(service);
 
 
     //Stop just in case
@@ -177,6 +178,8 @@ bool WebRTCStream::start(Type type)
     webrtc::PeerConnectionInterface::IceServer server;
     server.uri = "stun:stun.l.google.com:19302";
     config.servers.push_back(server);
+    config.tcp_candidate_policy = webrtc::PeerConnectionInterface::kTcpCandidatePolicyDisabled;
+    config.type = webrtc::PeerConnectionInterface::kNoHost;
     
     //Create peer connection
     pc = factory->CreatePeerConnection(config, &constraints, NULL, NULL, this);
@@ -277,16 +280,6 @@ bool WebRTCStream::start(Type type)
             return false;
         };
     } else if (type == WebRTCStream::YouNow){
-        info("info: WebRTCStream::start: Verifying Token");
-
-        if(milliToken == ""){
-            error("Invalid token or publishing name");
-            obs_output_signal_stop(output, OBS_OUTPUT_CONNECT_FAILED);
-            return false;
-        }
-        
-        info("info: WebRTCStream::start: Token verified");
-
         info("info: WebRTCStream::start:connecting to [url:%s, token :%s]", url.c_str(), milliToken.c_str());
         if(!client->connect(url, room, username, milliToken , this)){
             //Error
@@ -323,7 +316,7 @@ void WebRTCStream::OnSuccess(webrtc::SessionDescriptionInterface * desc)
 void WebRTCStream::OnFailure(const std::string & error)
 {
     //Failed
-    warn("Error [%s]", error.c_str());
+    warn("WebRTCStream::OnFailure: Error [%s]", error.c_str());
     //Stop
     stop();
     //Disconnect
@@ -349,9 +342,13 @@ void WebRTCStream::OnIceConnectionChange(webrtc::PeerConnectionInterface::IceCon
     info("WebRTCStream::OnIceConnectionChange: ICE State changed to: " + new_state);
 }
 
-void WebRTCStream::onIceCandidateReceived(const std::string &sdp_mid, const int sdp_midlineindex, const std::string &sdp) {
+void WebRTCStream::onIceCandidateReceived(const std::string &sdp_mid, int sdp_midlineindex, const std::string &sdp) {
+    info("WebRTCStream::onIceCandidateReceived: Creating candidate");
+
     std::unique_ptr<webrtc::IceCandidateInterface> candidate(webrtc::CreateIceCandidate(sdp_mid, sdp_midlineindex, sdp, nullptr));
         
+    info("WebRTCStream::onIceCandidateReceived: Candidate created");
+
     if (!candidate.get()) {
         info("can't parse received candidate message");
         return;
@@ -419,15 +416,14 @@ void WebRTCStream::onOpened(const std::string &sdp)
     obs_data_t *params = obs_encoder_get_settings(vencoder);
     int bitrate_settings = obs_data_get_int(params, "bitrate");
 
-    //modify bitrate
-    SDPModif::bitrateSDP(sdpNotConst, bitrate_settings);
+    // //modify bitrate
+    // SDPModif::bitrateSDP(sdpNotConst, bitrate_settings);
 
-    // Enable stereo
-    SDPModif::stereoSDP(sdpNotConst);
+    // // Enable stereo
+    // SDPModif::stereoSDP(sdpNotConst);
     
     webrtc::SdpParseError error;
-    webrtc::SessionDescriptionInterface* answer =
-    webrtc::CreateSessionDescription(webrtc::SessionDescriptionInterface::kAnswer, sdpNotConst, &error);
+    webrtc::SessionDescriptionInterface* answer = webrtc::CreateSessionDescription(webrtc::SessionDescriptionInterface::kAnswer, sdp, &error);    
 
     pc->SetRemoteDescription(this, answer);
 
