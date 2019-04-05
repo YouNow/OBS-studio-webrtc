@@ -83,12 +83,14 @@ public:
   //
   // PeerConnectionObserver implementation.
   //
+  void OnIceConnectionChange(webrtc::PeerConnectionInterface::IceConnectionState new_state);
+
+
   void OnSignalingChange(webrtc::PeerConnectionInterface::SignalingState new_state) override {};
   void OnAddStream(rtc::scoped_refptr<webrtc::MediaStreamInterface> stream) override {};
   void OnRemoveStream(rtc::scoped_refptr<webrtc::MediaStreamInterface> stream) override {};
   void OnDataChannel(rtc::scoped_refptr<webrtc::DataChannelInterface> channel) override {}
   void OnRenegotiationNeeded() override {}
-  void OnIceConnectionChange(webrtc::PeerConnectionInterface::IceConnectionState new_state) override {};
   void OnIceGatheringChange(webrtc::PeerConnectionInterface::IceGatheringState new_state) override {};
   void OnIceCandidate(const webrtc::IceCandidateInterface* candidate) override;
   void OnIceConnectionReceivingChange(bool receiving) override {}

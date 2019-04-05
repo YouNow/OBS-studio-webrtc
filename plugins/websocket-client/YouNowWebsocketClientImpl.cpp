@@ -102,6 +102,9 @@ bool YouNowWebsocketClientImpl::connect(std::string url, long long room, std::st
           roomId = msg["roomId"];
         }
 
+        // Trigger onLogged - Now the SDP can be generated, because we have all the ids we need to send to the signaling
+        listener->onLogged(0);
+
         return;
       } else if (msg.find("sdp") != msg.end()) {
         // received a sdp message
@@ -127,7 +130,7 @@ bool YouNowWebsocketClientImpl::connect(std::string url, long long room, std::st
         std::string sdp_mid = iceMsg["sdpMid"];
         int sdp_mlineindex = iceMsg["sdpMLineIndex"];
 
-        // listener->onIceCandidateReceived(sdp_mid, sdp_mlineindex, sdp);
+        listener->onIceCandidateReceived(sdp_mid, sdp_mlineindex, sdp);
       }
       return;
     });
@@ -137,10 +140,6 @@ bool YouNowWebsocketClientImpl::connect(std::string url, long long room, std::st
       // Launch event
       listener->onConnected();
       // std::cout << "> Error ON Disconnect close: " << ec.message() << std::endl;
-
-      // And logged
-      listener->onLogged(0);
-
     });
 
     // Set close hanlder
@@ -191,33 +190,54 @@ bool YouNowWebsocketClientImpl::connect(std::string url, long long room, std::st
 
 bool YouNowWebsocketClientImpl::open(const std::string &sdp, const std::string &codec, const std::string &milliId)
 {
-  if (sdp == "") {
-    // sending join command
-    try {
+  // sending join command
+  try {
+    json open;
 
+    if (milliId == "true") {
+      // sending join command
       std::cout << "YouNowWebsocketClientImpl::open: Sending join command" << std::endl;
-      // Login command
-      json open = {
-          {"peerId", peerId},
-          {"userId", "746521"},
-          {"streamKey", streamKey},
-          {"applicationId", "OBS"},
-          {"sdkVersion", "0.0.1"},
-          {"device", "OBS"},
-          {"os", "Mac"},
-          {"sdp", sdp}
-      };
+      open = {
+        {"peerId", peerId},
+        {"userId", "746521"},
+        {"roomId", roomId},
+        {"authKey", authKey},
+        {"sdp",
+          { 
+            {"sdp", sdp},
+            {"type", "offer"}
+          }
+        },
+        {"applicationId", "OBS"},
+        {"sdkVersion", "0.0.1"},
+        {"device", "OBS"},
+        {"os", "Mac"}
+      };      
+    } else {
+      // sending preJoin
+      std::cout << "YouNowWebsocketClientImpl::open: Sending preJoin command" << std::endl;
+      open = {
+        {"peerId", peerId},
+        {"userId", "746521"},
+        {"streamKey", streamKey},
+        {"preJoin", true},
+        {"applicationId", "OBS"},
+        {"sdkVersion", "0.0.1"},
+        {"device", "OBS"},
+        {"os", "Mac"}
+      };      
+    } 
 
-      // Serialize and send
-      if (connection->send(open.dump()))
+    std::cout << "YouNowWebsocketClientImpl::open: Command: " << open << std::endl;
+
+    // Serialize and send
+    if (connection->send(open.dump()))
         return false;
-    }
-    catch (websocketpp::exception const &e)
-    {
-      std::cout << e.what() << std::endl;
-      return false;
-    }
-  } 
+  }
+  catch (websocketpp::exception const &e) {
+    std::cout << e.what() << std::endl;
+    return false;
+  }
 
   return true;
 }
@@ -229,19 +249,24 @@ bool YouNowWebsocketClientImpl::trickle(const std::string &mid, int index, const
     std::cout << "YouNowWebsocketClientImpl::trickle: Got a trickle message with this candidate: " + candidate << std::endl; 
     // Login command
     json open = {
-        {
-          {"authKey", authKey},
-          {"roomId", roomId},
-          {"peerId", peerId},
-          {"userId", "746521"},
-            "ice",
-              {
-                {"candidate", candidate},
-                {"sdpMLineIndex", index},
-                {"sdpMid", mid}
-              }
-        }
+        {"authKey", authKey},
+        {"roomId", roomId},
+        {"peerId", peerId},
+        {"userId", "746521"},
+        {"ice",
+            {
+              {"candidate", candidate},
+              {"sdpMLineIndex", index},
+              {"sdpMid", mid}
+            }
+        },
+        {"applicationId", "OBS"},
+        {"sdkVersion", "0.0.1"},
+        {"device", "OBS"},
+        {"os", "Mac"}
     };
+
+    std::cout << "YouNowWebsocketClientImpl::trickle: Command: " << open << std::endl;
 
     // Serialize and send
     if (connection->send(open.dump()))

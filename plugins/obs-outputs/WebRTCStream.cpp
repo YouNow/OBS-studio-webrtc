@@ -317,7 +317,7 @@ void WebRTCStream::OnSuccess(webrtc::SessionDescriptionInterface * desc)
     pc->SetLocalDescription(this, desc);
     //Send SDP
     info("WebRTCStream::OnSucess: %s", codec.c_str());
-    client->open(sdp, codec, milliId);
+    client->open(sdp, codec, "true");
 }
 
 void WebRTCStream::OnFailure(const std::string & error)
@@ -344,6 +344,10 @@ void WebRTCStream::OnIceCandidate(const webrtc::IceCandidateInterface* candidate
     //Trickle
     client->trickle(candidate->sdp_mid(), candidate->sdp_mline_index(), str, false);
 };
+
+void WebRTCStream::OnIceConnectionChange(webrtc::PeerConnectionInterface::IceConnectionState new_state) {
+    info("WebRTCStream::OnIceConnectionChange: ICE State changed to: " + new_state);
+}
 
 void WebRTCStream::onIceCandidateReceived(const std::string &sdp_mid, const int sdp_midlineindex, const std::string &sdp) {
     std::unique_ptr<webrtc::IceCandidateInterface> candidate(webrtc::CreateIceCandidate(sdp_mid, sdp_midlineindex, sdp, nullptr));
@@ -385,8 +389,8 @@ bool WebRTCStream::stop()
 void WebRTCStream::onConnected()
 {
     //LOG
-    info("onConnected");
-    
+    info("WebRTCStream::OnSuccess: onConnected");
+    client->open("", "", "false");
 }
 
 void WebRTCStream::onLogged(int code)
