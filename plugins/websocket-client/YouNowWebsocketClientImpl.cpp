@@ -55,7 +55,10 @@ bool YouNowWebsocketClientImpl::connect(std::string url, long long room, std::st
 
     std::string signaling_url = "wss://signaling.younow-play.video.propsproject.com";
 
-    std::string wss = signaling_url + "/?peerId=" + peerId + "&streamKey=" + token;
+    std::size_t i = streamKey.find('_');
+    userId = streamKey.substr(0, i);
+
+    std::string wss = signaling_url + "/?peerId=" + peerId + "&streamKey=" + token + "&isHost=true";
 
     // Create websocket connection and add token and callback parameters
     std::cout << "YouNowWebsocketClientImpl::connect: Connection URL: " << wss << std::endl;
@@ -195,7 +198,7 @@ bool YouNowWebsocketClientImpl::open(const std::string &sdp, const std::string &
       std::cout << "YouNowWebsocketClientImpl::open: Sending join command" << std::endl;
       open = {
         {"peerId", peerId},
-        {"userId", "746521"},
+        {"userId", userId},
         {"roomId", roomId},
         {"authKey", authKey},
         {"sdp",
@@ -214,10 +217,10 @@ bool YouNowWebsocketClientImpl::open(const std::string &sdp, const std::string &
       std::cout << "YouNowWebsocketClientImpl::open: Sending preJoin command" << std::endl;
       open = {
         {"peerId", peerId},
-        {"userId", "746521"},
+        {"userId", userId},
         {"streamKey", streamKey},
         {"preJoin", true},
-        {"maxBw", 2500},
+        {"maxBw", 5000},
         {"applicationId", "OBS"},
         {"sdkVersion", "0.0.1"},
         {"device", "OBS"},
@@ -249,7 +252,7 @@ bool YouNowWebsocketClientImpl::trickle(const std::string &mid, int index, const
         {"authKey", authKey},
         {"roomId", roomId},
         {"peerId", peerId},
-        {"userId", "746521"},
+        {"userId", userId},
         {"ice",
             {
               {"candidate", candidate},

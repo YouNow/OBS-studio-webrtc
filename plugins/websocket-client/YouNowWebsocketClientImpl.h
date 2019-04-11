@@ -38,6 +38,7 @@ private:
     Client::connection_ptr connection;
 
     std::string peerId;
+    std::string userId;
     std::string roomId;
     std::string streamKey;
     std::string authKey;
