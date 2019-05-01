@@ -700,7 +700,6 @@ OBSBasicSettings::OBSBasicSettings(QWidget *parent)
 	UpdateAutomaticReplayBufferCheckboxes();
 
 
-	ui->warning_label->setStyleSheet("QLabel { color : red; }");
 	QObject::connect(ui->streamType, SIGNAL(currentIndexChanged(int)), this, SLOT(displayWarning()));
 }
 
@@ -4355,9 +4354,9 @@ void OBSBasicSettings::on_disableOSXVSync_clicked()
 }
 
 void OBSBasicSettings::displayWarning() {
-	if (ui->streamType->currentIndex() == 0 || ui->streamType->currentIndex() == 1) {
-		ui->warning_label->setVisible(false);
-	} else {
-		ui->warning_label->setVisible(true);
-	}
+	//if (ui->streamType->currentIndex() == 0 || ui->streamType->currentIndex() == 1) {
+	//	ui->warning_label->setVisible(false);
+	//} else {
+	//	ui->warning_label->setVisible(true);
+	//}
 }

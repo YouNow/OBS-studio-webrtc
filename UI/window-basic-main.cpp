@@ -1619,6 +1619,7 @@ void OBSBasic::OBSInit()
 	}
 
 	if (!first_run && !has_last_version && !Active()) {
+		/*
 		QString msg;
 		msg = QTStr("Basic.FirstStartup.RunWizard");
 		msg += "\n\n";
@@ -1635,6 +1636,7 @@ void OBSBasic::OBSInit()
 			OBSMessageBox::information(this,
 					QTStr("Basic.AutoConfig"), msg);
 		}
+		*/
 	}
 
 	if (config_get_bool(basicConfig, "General", "OpenStatsOnStartup"))

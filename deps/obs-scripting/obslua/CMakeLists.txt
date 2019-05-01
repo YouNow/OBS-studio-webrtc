@@ -25,7 +25,7 @@ function(install_plugin_bin_swig target additional_target)
 	elseif(CMAKE_SIZEOF_VOID_P EQUAL 8)
 		set(_bit_suffix "64bit/")
 	else()
-		set(_bit_suffix "32bit/")
+		set(_bit_suffix "")
 	endif()
 
 	set_target_properties(${additional_target} PROPERTIES

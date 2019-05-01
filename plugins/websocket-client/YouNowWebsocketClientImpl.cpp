@@ -53,7 +53,7 @@ bool YouNowWebsocketClientImpl::connect(std::string url, long long room, std::st
 
     streamKey = token;
 
-    std::string signaling_url = "wss://signaling.younow-play.video.propsproject.com";
+    std::string signaling_url = "wss://signaling.younow-prod.video.propsproject.com";
 
     std::size_t i = streamKey.find('_');
     userId = streamKey.substr(0, i);

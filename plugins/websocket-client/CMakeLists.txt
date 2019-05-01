@@ -21,8 +21,15 @@ include_directories(${LIBOBS_INCLUDE_DIRS})
 #------------------------------------------------------------------------
 # Asio
 #
+message(STATUS "ASIO Library at: " ${CMAKE_CURRENT_SOURCE_DIR} "/third_party/asio/include")
+
 include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/third_party/asio/include )
-include_directories( /usr/local/opt/openssl@1.1/include)
+
+if( WIN32 )
+  include_directories( "C:/OpenSSL-Win32/include")
+elseif ( APPLE )
+  include_directories( /usr/local/opt/openssl@1.1/include)
+endif()
 
 include_directories( ${CURL_INCLUDE_DIR} )
 
@@ -85,6 +92,11 @@ if ( APPLE )
     # /usr/local/lib/libssl.dylib
     # /usr/local/lib/libcrypto.dylib
   )
+elseif ( WIN32 )
+  target_link_libraries( websocketclient
+    "c:/OpenSSL-WIN32/lib/libssl.lib"
+    "c:/OpenSSL-WIN32/lib/libcrypto.lib"
+  )
 endif()
 
 #-------------------------------------------------------------
@@ -95,6 +107,7 @@ endif()
 # Change destination if needed
 # Works only if OpenSSL is built as a shared library
 set( libwebrtc_rootdir ${libwebrtc_DIR}/..)
+
 if ( UNIX AND NOT APPLE )
   install(
     FILES       ${libwebrtc_rootdir}/lib/libssl.a
@@ -129,14 +142,21 @@ elseif ( APPLE )
     DESTINATION ${OBS_EXECUTABLE_DESTINATION} COMPONENT   Libraries )
 else ( WIN32 )
   install(
-    FILES       ${libwebrtc_rootdir}/lib/libssl.lib
+    FILES       "c:/OpenSSL-WIN32/lib/libssl.lib"
     DESTINATION ${OBS_EXECUTABLE_DESTINATION} COMPONENT   Libraries )
   install(
-    FILES       ${libwebrtc_rootdir}/lib/libcrypto.lib
+    FILES       "c:/OpenSSL-WIN32/lib/libcrypto.lib"
     DESTINATION ${OBS_EXECUTABLE_DESTINATION} COMPONENT   Libraries )
   install(
-    FILES       ${libwebrtc_rootdir}/lib/webrtc.lib
+    FILES       "c:/dev/webrtc-checkout/src/out/Default/obj/webrtc.lib"
     DESTINATION ${OBS_EXECUTABLE_DESTINATION} COMPONENT   Libraries )
+  install(
+    FILES       "c:/OpenSSL-WIN32/bin/libssl-1_1.dll"
+    DESTINATION ${OBS_EXECUTABLE_DESTINATION} COMPONENT   Libraries )
+  install(
+    FILES       "c:/OpenSSL-WIN32/bin/libcrypto-1_1.dll"
+    DESTINATION ${OBS_EXECUTABLE_DESTINATION} COMPONENT   Libraries )
+  
   if( EXISTS "${libwebrtc_rootdir}/bin/libssl-1_1-x64.dll" )
     install(
       FILES       ${libwebrtc_rootdir}/bin/libssl-1_1-x64.dll

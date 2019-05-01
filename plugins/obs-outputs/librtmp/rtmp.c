@@ -166,7 +166,10 @@ RTMP_GetTime()
 #ifdef _DEBUG
     return 0;
 #elif defined(_WIN32)
-    return timeGetTime();
+    // ERAN
+    return 0;
+
+    //return timeGetTime();
 #else
     struct tms t;
     if (!clk_tck) clk_tck = sysconf(_SC_CLK_TCK);

@@ -218,12 +218,9 @@ AutoConfigStreamPage::AutoConfigStreamPage(QWidget *parent)
 	ui->bitrateLabel->setVisible(false);
 	ui->bitrate->setVisible(false);
 
+	ui->streamType->addItem(obs_service_get_display_name("younow"));
 	ui->streamType->addItem(obs_service_get_display_name("rtmp_common"));
 	ui->streamType->addItem(obs_service_get_display_name("rtmp_custom"));
-	ui->streamType->addItem(obs_service_get_display_name("webrtc_janus"));
-	ui->streamType->addItem(obs_service_get_display_name("webrtc_spankchain"));
-	ui->streamType->addItem(obs_service_get_display_name("webrtc_millicast"));
-	ui->streamType->addItem(obs_service_get_display_name("younow"));
 
 	setTitle(QTStr("Basic.AutoConfig.StreamPage"));
 	setSubTitle(QTStr("Basic.AutoConfig.StreamPage.SubTitle"));
@@ -289,7 +286,8 @@ bool AutoConfigStreamPage::validatePage()
 		
 		case 1: serverType = "rtmp_custom";
 			break;
-		
+
+		/*
 		case 2: serverType = "webrtc_janus";
 			break;
 
@@ -298,7 +296,7 @@ bool AutoConfigStreamPage::validatePage()
 
 		case 4: serverType = "webrtc_millicast";
 			break;
-		
+		*/
 		case 5: serverType = "younow";
 			break;
 
@@ -423,7 +421,7 @@ void AutoConfigStreamPage::ServiceChanged()
 		ui->streamKeyLabel->setVisible(true);
 		ui->key->setVisible(true);
 		ui->show->setVisible(true);
-	} else if (ui->streamType->currentIndex() == 2) { //webrtc_janus
+	/*} else if (ui->streamType->currentIndex() == 2) { //webrtc_janus
 		ui->formLayout->insertRow(1, ui->serverLabel,
 				ui->serverStackedWidget);
 
@@ -459,7 +457,7 @@ void AutoConfigStreamPage::ServiceChanged()
 		ui->streamKeyLabel->setVisible(true);
 		ui->key->setVisible(true);
 		ui->show->setVisible(true);
-	
+	*/
 	} else if (ui->streamType->currentIndex() == 5)	{ //younow
 		blog(LOG_WARNING, "AutoConfigStreamPage::ServiceChanged - webrtc_younow has been selected");
 
