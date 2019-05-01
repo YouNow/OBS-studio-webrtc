@@ -30,7 +30,7 @@ static OBSData OpenServiceSettings(std::string &type)
 			"bak");
 	obs_data_release(data);
 
-	obs_data_set_default_string(data, "type", "rtmp_common");
+	obs_data_set_default_string(data, "type", "younow");
 	type = obs_data_get_string(data, "type");
 
 	OBSData settings = obs_data_get_obj(data, "settings");
@@ -287,16 +287,6 @@ bool AutoConfigStreamPage::validatePage()
 		case 1: serverType = "rtmp_custom";
 			break;
 
-		/*
-		case 2: serverType = "webrtc_janus";
-			break;
-
-		case 3: serverType = "webrtc_spankchain";
-			break;
-
-		case 4: serverType = "webrtc_millicast";
-			break;
-		*/
 		case 5: serverType = "younow";
 			break;
 

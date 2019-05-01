@@ -194,7 +194,8 @@ bool WebRTCStream::start(Type type)
     }
 
     //Create the media stream
-    rtc::scoped_refptr<webrtc::MediaStreamInterface> stream = factory->CreateLocalMediaStream("obs");
+    // rtc::scoped_refptr<webrtc::MediaStreamInterface> stream = factory->CreateLocalMediaStream("obs");
+    rtc::scoped_refptr<webrtc::MediaStreamInterface> stream = factory->CreateLocalMediaStream(rtc::CreateRandomUuid());
     cricket::AudioOptions options;
    
     options.echo_cancellation.emplace(false);

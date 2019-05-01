@@ -1015,7 +1015,7 @@ bool OBSBasic::LoadService()
 	obs_data_t *data = obs_data_create_from_json_file_safe(serviceJsonPath,
 			"bak");
 
-	obs_data_set_default_string(data, "type", "rtmp_common");
+	obs_data_set_default_string(data, "type", "younow");
 	type = obs_data_get_string(data, "type");
 
 	obs_data_t *settings = obs_data_get_obj(data, "settings");
@@ -1039,7 +1039,7 @@ bool OBSBasic::InitService()
 	if (LoadService())
 		return true;
 
-	service = obs_service_create("rtmp_common", "default_service", nullptr,
+	service = obs_service_create("younow", "default_service", nullptr,
 			nullptr);
 	if (!service)
 		return false;
