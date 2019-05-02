@@ -187,13 +187,13 @@ bool YouNowWebsocketClientImpl::connect(std::string url, long long room, std::st
   return true;
 }
 
-bool YouNowWebsocketClientImpl::open(const std::string &sdp, const std::string &codec, const std::string &milliId)
+bool YouNowWebsocketClientImpl::open(const std::string &sdp, const bool isJoin, const int maxBw)
 {
   // sending join command
   try {
     json open;
 
-    if (milliId == "true") {
+    if (isJoin) {
       // sending join command
       std::cout << "YouNowWebsocketClientImpl::open: Sending join command" << std::endl;
       open = {
@@ -220,7 +220,8 @@ bool YouNowWebsocketClientImpl::open(const std::string &sdp, const std::string &
         {"userId", userId},
         {"streamKey", streamKey},
         {"preJoin", true},
-        {"maxBw", 5000},
+        {"maxBw", maxBw
+      },
         {"applicationId", "OBS"},
         {"sdkVersion", "0.0.1"},
         {"device", "OBS"},

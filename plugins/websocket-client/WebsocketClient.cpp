@@ -12,7 +12,12 @@ bool obs_module_load(void)
 
 WEBSOCKETCLIENT_API WebsocketClient* createWebsocketClient(int type)
 {
-  if (type == WEBSOCKETCLIENT_YOUNOW)
-    return new YouNowWebsocketClientImpl();
+	if (type == WEBSOCKETCLIENT_YOUNOW) {
+		std::cout << "WebsocketClient: YOUNOW";
+		return new YouNowWebsocketClientImpl();
+	}
+	else {
+		std::cout << "WebsocketClient: NULL";
+	}
   return nullptr;
 }

@@ -257,7 +257,7 @@ bool WebRTCStream::start(Type type)
         //Error
         return false;
     }
-
+    info("WebRTCStream::start: Type of client:%d", type);
     //Create websocket client
     this->client = createWebsocketClient(type);
     //Check if it was created correctly
@@ -280,10 +280,12 @@ bool WebRTCStream::start(Type type)
             obs_output_signal_stop(output, OBS_OUTPUT_CONNECT_FAILED);
             return false;
         };
-    } else if (type == WebRTCStream::YouNow){
+    } else if (type == WebRTCStream::YouNow){	
         info("info: WebRTCStream::start:connecting to [url:%s, token :%s]", url.c_str(), milliToken.c_str());
         if(!client->connect(url, room, username, milliToken , this)){
             //Error
+	    info("info: WebRTCStream::start: failed connecting");
+
             obs_output_signal_stop(output, OBS_OUTPUT_CONNECT_FAILED);
             return false;
         };
@@ -311,13 +313,19 @@ void WebRTCStream::OnSuccess(webrtc::SessionDescriptionInterface * desc)
     pc->SetLocalDescription(this, desc);
     //Send SDP
     info("WebRTCStream::OnSucess: %s", codec.c_str());
-    client->open(sdp, codec, "true");
+
+    obs_output_t  *context = this->output;
+    obs_encoder_t *vencoder = obs_output_get_video_encoder(context);
+    obs_data_t *params = obs_encoder_get_settings(vencoder);
+    int bitrate_settings = obs_data_get_int(params, "bitrate");
+
+    client->open(sdp, true, bitrate_settings);
 }
 
 void WebRTCStream::OnFailure(const std::string & error)
 {
     //Failed
-    warn("WebRTCStream::OnFailure: Error [%s]", error.c_str());
+    info("WebRTCStream::OnFailure: Error [%s]", error.c_str());
     //Stop
     stop();
     //Disconnect
@@ -388,7 +396,12 @@ void WebRTCStream::onConnected()
 {
     //LOG
     info("WebRTCStream::OnSuccess: onConnected");
-    client->open("", "", "false");
+    obs_output_t  *context = this->output;
+    obs_encoder_t *vencoder = obs_output_get_video_encoder(context);
+    obs_data_t *params = obs_encoder_get_settings(vencoder);
+    int bitrate_settings = obs_data_get_int(params, "bitrate");
+
+    client->open("", false, bitrate_settings);
 }
 
 void WebRTCStream::onLogged(int code)
