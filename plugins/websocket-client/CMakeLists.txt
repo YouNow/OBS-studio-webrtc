@@ -145,10 +145,10 @@ else ( WIN32 )
     FILES       "c:/dev/webrtc-checkout/src/out/Default/obj/webrtc.lib"
     DESTINATION ${OBS_EXECUTABLE_DESTINATION} COMPONENT   Libraries )
   install(
-    FILES       "c:/OpenSSL-WIN64/bin/libssl-1_1.dll"
+    FILES       "c:/OpenSSL-WIN64/bin/libssl-1_1-x64.dll"
     DESTINATION ${OBS_EXECUTABLE_DESTINATION} COMPONENT   Libraries )
   install(
-    FILES       "c:/OpenSSL-WIN64/bin/libcrypto-1_1.dll"
+    FILES       "c:/OpenSSL-WIN64/bin/libcrypto-1_1-x64.dll"
     DESTINATION ${OBS_EXECUTABLE_DESTINATION} COMPONENT   Libraries )
   
   if( EXISTS "${libwebrtc_rootdir}/bin/libssl-1_1-x64.dll" )

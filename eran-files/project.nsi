@@ -3,9 +3,9 @@
 ;--------------------------------
 ; You must define these values
 
-  !define VERSION "1.0.0"
-  !define PATCH  "0"
-  !define INST_DIR "C:/dev/OBS-studio-webrtc/build/_CPack_Packages/win32/NSIS/younow-obs-studio"
+  !define VERSION "1.0.1"
+  !define PATCH  "1"
+  !define INST_DIR "C:/dev/obs-studio-webrtc/build64/_CPack_Packages/win64/NSIS/younow-obs-studio"
 
 ;--------------------------------
 ;Variables
@@ -25,14 +25,14 @@
   !include "MUI.nsh"
 
   ;Default installation folder
-  InstallDir "$PROGRAMFILES\OBS Studio (32bit)"
+  InstallDir "$PROGRAMFILES64\YouNow OBS Studio"
 
 ;--------------------------------
 ;General
 
   ;Name and file
-  Name "OBS Studio (32bit)"
-  OutFile "C:/dev/OBS-studio-webrtc/build/_CPack_Packages/win32/NSIS/younow-obs-studio.exe"
+  Name "YouNow OBS Studio"
+  OutFile "C:/dev/obs-studio-webrtc/build64/_CPack_Packages/win64/NSIS/younow-obs-studio.exe"
 
   ;Set compression
   SetCompressor lzma
@@ -77,7 +77,7 @@ Var AR_RegFlags
 
   ClearErrors
   ;Reading component status from registry
-  ReadRegDWORD $AR_RegFlags HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\OBSStudio32\Components\${SecName}" "Installed"
+  ReadRegDWORD $AR_RegFlags HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\OBSStudio64\Components\${SecName}" "Installed"
   IfErrors "default_${SecName}"
     ;Status will stay default if registry value not found
     ;(component was never installed)
@@ -110,13 +110,13 @@ Var AR_RegFlags
     ;Section is not selected:
     ;Calling Section uninstall macro and writing zero installed flag
     !insertmacro "Remove_${${SecName}}"
-    WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\OBSStudio32\Components\${SecName}" \
+    WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\OBSStudio64\Components\${SecName}" \
   "Installed" 0
     Goto "exit_${SecName}"
 
  "leave_${SecName}:"
     ;Section is selected:
-    WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\OBSStudio32\Components\${SecName}" \
+    WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\OBSStudio64\Components\${SecName}" \
   "Installed" 1
 
  "exit_${SecName}:"
@@ -489,7 +489,7 @@ Function ConditionalAddToRegisty
   Pop $0
   Pop $1
   StrCmp "$0" "" ConditionalAddToRegisty_EmptyString
-    WriteRegStr SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\OBSStudio32" \
+    WriteRegStr SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\OBSStudio64" \
     "$1" "$0"
     ;MessageBox MB_OK "Set Registry: '$1' to '$0'"
     DetailPrint "Set install registry entry: '$1' to '$0'"
@@ -544,13 +544,13 @@ FunctionEnd
 ;Pages
   !insertmacro MUI_PAGE_WELCOME
 
-  !insertmacro MUI_PAGE_LICENSE "C:/dev/OBS-studio-webrtc/UI/data/license/gplv2.txt"
+  !insertmacro MUI_PAGE_LICENSE "C:/dev/obs-studio-webrtc/UI/data/license/gplv2.txt"
   Page custom InstallOptionsPage
   !insertmacro MUI_PAGE_DIRECTORY
 
   ;Start Menu Folder Page Configuration
   !define MUI_STARTMENUPAGE_REGISTRY_ROOT "SHCTX"
-  !define MUI_STARTMENUPAGE_REGISTRY_KEY "Software\obsproject.com\OBSStudio32"
+  !define MUI_STARTMENUPAGE_REGISTRY_KEY "Software\obsproject.com\OBSStudio64"
   !define MUI_STARTMENUPAGE_REGISTRY_VALUENAME "Start Menu Folder"
   !insertmacro MUI_PAGE_STARTMENU Application $STARTMENU_FOLDER
 
@@ -639,15 +639,15 @@ Section "-Core installation"
   File /r "${INST_DIR}\*.*"
 
   ;Store installation folder
-  WriteRegStr SHCTX "Software\obsproject.com\OBSStudio32" "" $INSTDIR
+  WriteRegStr SHCTX "Software\obsproject.com\OBSStudio64" "" $INSTDIR
 
   ;Create uninstaller
   WriteUninstaller "$INSTDIR\Uninstall.exe"
   Push "DisplayName"
-  Push "OBS Studio (32bit)"
+  Push "YouNow OBS Studio"
   Call ConditionalAddToRegisty
   Push "DisplayVersion"
-  Push "1.0.0"
+  Push "1.0.1"
   Call ConditionalAddToRegisty
   Push "Publisher"
   Push "obsproject.com"
@@ -688,10 +688,10 @@ Section "-Core installation"
 
   ;Create shortcuts
   CreateDirectory "$SMPROGRAMS\$STARTMENU_FOLDER"
-  SetOutPath "$INSTDIR\bin\32bit"
-  CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\OBS Studio.lnk" "$INSTDIR\bin\32bit\obs32.exe"
+  SetOutPath "$INSTDIR\bin\64bit"
+  CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\YouNow OBS Studio.lnk" "$INSTDIR\bin\64bit\obs64.exe"
   StrCmp "$INSTALL_DESKTOP" "1" 0 +2
-    CreateShortCut "$DESKTOP\OBS Studio.lnk" "$INSTDIR\bin\32bit\obs32.exe"
+    CreateShortCut "$DESKTOP\OBS Studio.lnk" "$INSTDIR\bin\64bit\obs64.exe"
 
 
   CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Uninstall.lnk" "$INSTDIR\Uninstall.exe"
@@ -735,7 +735,7 @@ SectionEnd
 ;--------------------------------
 ; Create custom pages
 Function InstallOptionsPage
-  !insertmacro MUI_HEADER_TEXT "Install Options" "Choose options for installing OBS Studio (32bit)"
+  !insertmacro MUI_HEADER_TEXT "Install Options" "Choose options for installing YouNow OBS Studio"
   !insertmacro MUI_INSTALLOPTIONS_DISPLAY "NSIS.InstallOptions.ini"
 
 FunctionEnd
@@ -807,17 +807,17 @@ FunctionEnd
 
 Section "Uninstall"
   ReadRegStr $START_MENU SHCTX \
-   "Software\Microsoft\Windows\CurrentVersion\Uninstall\OBSStudio32" "StartMenu"
+   "Software\Microsoft\Windows\CurrentVersion\Uninstall\OBSStudio64" "StartMenu"
   ;MessageBox MB_OK "Start menu is in: $START_MENU"
   ReadRegStr $DO_NOT_ADD_TO_PATH SHCTX \
-    "Software\Microsoft\Windows\CurrentVersion\Uninstall\OBSStudio32" "DoNotAddToPath"
+    "Software\Microsoft\Windows\CurrentVersion\Uninstall\OBSStudio64" "DoNotAddToPath"
   ReadRegStr $ADD_TO_PATH_ALL_USERS SHCTX \
-    "Software\Microsoft\Windows\CurrentVersion\Uninstall\OBSStudio32" "AddToPathAllUsers"
+    "Software\Microsoft\Windows\CurrentVersion\Uninstall\OBSStudio64" "AddToPathAllUsers"
   ReadRegStr $ADD_TO_PATH_CURRENT_USER SHCTX \
-    "Software\Microsoft\Windows\CurrentVersion\Uninstall\OBSStudio32" "AddToPathCurrentUser"
+    "Software\Microsoft\Windows\CurrentVersion\Uninstall\OBSStudio64" "AddToPathCurrentUser"
   ;MessageBox MB_OK "Add to path: $DO_NOT_ADD_TO_PATH all users: $ADD_TO_PATH_ALL_USERS"
   ReadRegStr $INSTALL_DESKTOP SHCTX \
-    "Software\Microsoft\Windows\CurrentVersion\Uninstall\OBSStudio32" "InstallToDesktop"
+    "Software\Microsoft\Windows\CurrentVersion\Uninstall\OBSStudio64" "InstallToDesktop"
   ;MessageBox MB_OK "Install to desktop: $INSTALL_DESKTOP "
 
 
@@ -825,48 +825,48 @@ Section "Uninstall"
   ;Remove files we installed.
   ;Keep the list of directories here in sync with the File commands above.
   Delete "$INSTDIR\bin"
-  Delete "$INSTDIR\bin\32bit"
-  Delete "$INSTDIR\bin\32bit\avcodec-57.dll"
-  Delete "$INSTDIR\bin\32bit\avdevice-57.dll"
-  Delete "$INSTDIR\bin\32bit\avfilter-6.dll"
-  Delete "$INSTDIR\bin\32bit\avformat-57.dll"
-  Delete "$INSTDIR\bin\32bit\avutil-55.dll"
-  Delete "$INSTDIR\bin\32bit\libcrypto-1_1.dll"
-  Delete "$INSTDIR\bin\32bit\libcrypto.lib"
-  Delete "$INSTDIR\bin\32bit\libcurl.dll"
-  Delete "$INSTDIR\bin\32bit\libEGL.dll"
-  Delete "$INSTDIR\bin\32bit\libGLESv2.dll"
-  Delete "$INSTDIR\bin\32bit\libobs-d3d11.dll"
-  Delete "$INSTDIR\bin\32bit\libobs-opengl.dll"
-  Delete "$INSTDIR\bin\32bit\libogg-0.dll"
-  Delete "$INSTDIR\bin\32bit\libopus-0.dll"
-  Delete "$INSTDIR\bin\32bit\libssl-1_1.dll"
-  Delete "$INSTDIR\bin\32bit\libssl.lib"
-  Delete "$INSTDIR\bin\32bit\libvorbis-0.dll"
-  Delete "$INSTDIR\bin\32bit\libvorbisenc-2.dll"
-  Delete "$INSTDIR\bin\32bit\libvorbisfile-3.dll"
-  Delete "$INSTDIR\bin\32bit\libvpx-1.dll"
-  Delete "$INSTDIR\bin\32bit\libx264-148.dll"
-  Delete "$INSTDIR\bin\32bit\lua51.dll"
-  Delete "$INSTDIR\bin\32bit\obs-frontend-api.dll"
-  Delete "$INSTDIR\bin\32bit\obs-scripting.dll"
-  Delete "$INSTDIR\bin\32bit\obs.dll"
-  Delete "$INSTDIR\bin\32bit\obs.lib"
-  Delete "$INSTDIR\bin\32bit\obs32.exe"
-  Delete "$INSTDIR\bin\32bit\obsglad.dll"
-  Delete "$INSTDIR\bin\32bit\platforms"
-  Delete "$INSTDIR\bin\32bit\platforms\qwindows.dll"
-  Delete "$INSTDIR\bin\32bit\Qt5Core.dll"
-  Delete "$INSTDIR\bin\32bit\Qt5Gui.dll"
-  Delete "$INSTDIR\bin\32bit\Qt5Widgets.dll"
-  Delete "$INSTDIR\bin\32bit\styles"
-  Delete "$INSTDIR\bin\32bit\styles\qwindowsvistastyle.dll"
-  Delete "$INSTDIR\bin\32bit\swresample-2.dll"
-  Delete "$INSTDIR\bin\32bit\swscale-4.dll"
-  Delete "$INSTDIR\bin\32bit\w32-pthreads.dll"
-  Delete "$INSTDIR\bin\32bit\w32-pthreads.lib"
-  Delete "$INSTDIR\bin\32bit\webrtc.lib"
-  Delete "$INSTDIR\bin\32bit\zlib.dll"
+  Delete "$INSTDIR\bin\64bit"
+  Delete "$INSTDIR\bin\64bit\avcodec-57.dll"
+  Delete "$INSTDIR\bin\64bit\avdevice-57.dll"
+  Delete "$INSTDIR\bin\64bit\avfilter-6.dll"
+  Delete "$INSTDIR\bin\64bit\avformat-57.dll"
+  Delete "$INSTDIR\bin\64bit\avutil-55.dll"
+  Delete "$INSTDIR\bin\64bit\libcrypto-1_1-x64.dll"
+  Delete "$INSTDIR\bin\64bit\libcrypto.lib"
+  Delete "$INSTDIR\bin\64bit\libcurl.dll"
+  Delete "$INSTDIR\bin\64bit\libEGL.dll"
+  Delete "$INSTDIR\bin\64bit\libGLESv2.dll"
+  Delete "$INSTDIR\bin\64bit\libobs-d3d11.dll"
+  Delete "$INSTDIR\bin\64bit\libobs-opengl.dll"
+  Delete "$INSTDIR\bin\64bit\libogg-0.dll"
+  Delete "$INSTDIR\bin\64bit\libopus-0.dll"
+  Delete "$INSTDIR\bin\64bit\libssl-1_1-x64.dll"
+  Delete "$INSTDIR\bin\64bit\libssl.lib"
+  Delete "$INSTDIR\bin\64bit\libvorbis-0.dll"
+  Delete "$INSTDIR\bin\64bit\libvorbisenc-2.dll"
+  Delete "$INSTDIR\bin\64bit\libvorbisfile-3.dll"
+  Delete "$INSTDIR\bin\64bit\libvpx-1.dll"
+  Delete "$INSTDIR\bin\64bit\libx264-148.dll"
+  Delete "$INSTDIR\bin\64bit\lua51.dll"
+  Delete "$INSTDIR\bin\64bit\obs-frontend-api.dll"
+  Delete "$INSTDIR\bin\64bit\obs-scripting.dll"
+  Delete "$INSTDIR\bin\64bit\obs.dll"
+  Delete "$INSTDIR\bin\64bit\obs.lib"
+  Delete "$INSTDIR\bin\64bit\obs64.exe"
+  Delete "$INSTDIR\bin\64bit\obsglad.dll"
+  Delete "$INSTDIR\bin\64bit\platforms"
+  Delete "$INSTDIR\bin\64bit\platforms\qwindows.dll"
+  Delete "$INSTDIR\bin\64bit\Qt5Core.dll"
+  Delete "$INSTDIR\bin\64bit\Qt5Gui.dll"
+  Delete "$INSTDIR\bin\64bit\Qt5Widgets.dll"
+  Delete "$INSTDIR\bin\64bit\styles"
+  Delete "$INSTDIR\bin\64bit\styles\qwindowsvistastyle.dll"
+  Delete "$INSTDIR\bin\64bit\swresample-2.dll"
+  Delete "$INSTDIR\bin\64bit\swscale-4.dll"
+  Delete "$INSTDIR\bin\64bit\w32-pthreads.dll"
+  Delete "$INSTDIR\bin\64bit\w32-pthreads.lib"
+  Delete "$INSTDIR\bin\64bit\webrtc.lib"
+  Delete "$INSTDIR\bin\64bit\zlib.dll"
   Delete "$INSTDIR\cmake"
   Delete "$INSTDIR\cmake\LibObs"
   Delete "$INSTDIR\cmake\LibObs\LibObsConfig.cmake"
@@ -941,7 +941,7 @@ Section "Uninstall"
   Delete "$INSTDIR\data\obs-plugins\coreaudio-encoder\locale\zh-CN.ini"
   Delete "$INSTDIR\data\obs-plugins\coreaudio-encoder\locale\zh-TW.ini"
   Delete "$INSTDIR\data\obs-plugins\enc-amf"
-  Delete "$INSTDIR\data\obs-plugins\enc-amf\enc-amf-test32.exe"
+  Delete "$INSTDIR\data\obs-plugins\enc-amf\enc-amf-test64.exe"
   Delete "$INSTDIR\data\obs-plugins\enc-amf\locale"
   Delete "$INSTDIR\data\obs-plugins\enc-amf\locale\bn-BD.ini"
   Delete "$INSTDIR\data\obs-plugins\enc-amf\locale\ca-ES.ini"
@@ -1065,7 +1065,7 @@ Section "Uninstall"
   Delete "$INSTDIR\data\obs-plugins\image-source\locale\zh-CN.ini"
   Delete "$INSTDIR\data\obs-plugins\image-source\locale\zh-TW.ini"
   Delete "$INSTDIR\data\obs-plugins\obs-ffmpeg"
-  Delete "$INSTDIR\data\obs-plugins\obs-ffmpeg\ffmpeg-mux32.exe"
+  Delete "$INSTDIR\data\obs-plugins\obs-ffmpeg\ffmpeg-mux64.exe"
   Delete "$INSTDIR\data\obs-plugins\obs-ffmpeg\locale"
   Delete "$INSTDIR\data\obs-plugins\obs-ffmpeg\locale\ar-SA.ini"
   Delete "$INSTDIR\data\obs-plugins\obs-ffmpeg\locale\bg-BG.ini"
@@ -1519,9 +1519,9 @@ Section "Uninstall"
   Delete "$INSTDIR\data\obs-plugins\text-freetype2\locale\zh-TW.ini"
   Delete "$INSTDIR\data\obs-plugins\text-freetype2\text_default.effect"
   Delete "$INSTDIR\data\obs-plugins\win-capture"
-  Delete "$INSTDIR\data\obs-plugins\win-capture\get-graphics-offsets32.exe"
-  Delete "$INSTDIR\data\obs-plugins\win-capture\graphics-hook32.dll"
-  Delete "$INSTDIR\data\obs-plugins\win-capture\inject-helper32.exe"
+  Delete "$INSTDIR\data\obs-plugins\win-capture\get-graphics-offsets64.exe"
+  Delete "$INSTDIR\data\obs-plugins\win-capture\graphics-hook64.dll"
+  Delete "$INSTDIR\data\obs-plugins\win-capture\inject-helper64.exe"
   Delete "$INSTDIR\data\obs-plugins\win-capture\locale"
   Delete "$INSTDIR\data\obs-plugins\win-capture\locale\ar-SA.ini"
   Delete "$INSTDIR\data\obs-plugins\win-capture\locale\bn-BD.ini"
@@ -1684,8 +1684,8 @@ Section "Uninstall"
   Delete "$INSTDIR\data\obs-plugins\win-wasapi\locale\zh-CN.ini"
   Delete "$INSTDIR\data\obs-plugins\win-wasapi\locale\zh-TW.ini"
   Delete "$INSTDIR\data\obs-scripting"
-  Delete "$INSTDIR\data\obs-scripting\32bit"
-  Delete "$INSTDIR\data\obs-scripting\32bit\obslua.dll"
+  Delete "$INSTDIR\data\obs-scripting\64bit"
+  Delete "$INSTDIR\data\obs-scripting\64bit\obslua.dll"
   Delete "$INSTDIR\data\obs-studio"
   Delete "$INSTDIR\data\obs-studio\license"
   Delete "$INSTDIR\data\obs-studio\license\gplv2.txt"
@@ -1897,31 +1897,31 @@ Section "Uninstall"
   Delete "$INSTDIR\include\util\windows\win-version.h"
   Delete "$INSTDIR\include\util\windows\WinHandle.hpp"
   Delete "$INSTDIR\obs-plugins"
-  Delete "$INSTDIR\obs-plugins\32bit"
-  Delete "$INSTDIR\obs-plugins\32bit\coreaudio-encoder.dll"
-  Delete "$INSTDIR\obs-plugins\32bit\enc-amf.dll"
-  Delete "$INSTDIR\obs-plugins\32bit\frontend-tools.dll"
-  Delete "$INSTDIR\obs-plugins\32bit\image-source.dll"
-  Delete "$INSTDIR\obs-plugins\32bit\obs-ffmpeg.dll"
-  Delete "$INSTDIR\obs-plugins\32bit\obs-filters.dll"
-  Delete "$INSTDIR\obs-plugins\32bit\obs-outputs.dll"
-  Delete "$INSTDIR\obs-plugins\32bit\obs-qsv11.dll"
-  Delete "$INSTDIR\obs-plugins\32bit\obs-text.dll"
-  Delete "$INSTDIR\obs-plugins\32bit\obs-transitions.dll"
-  Delete "$INSTDIR\obs-plugins\32bit\obs-vst.dll"
-  Delete "$INSTDIR\obs-plugins\32bit\obs-x264.dll"
-  Delete "$INSTDIR\obs-plugins\32bit\rtmp-services.dll"
-  Delete "$INSTDIR\obs-plugins\32bit\text-freetype2.dll"
-  Delete "$INSTDIR\obs-plugins\32bit\websocketclient.dll"
-  Delete "$INSTDIR\obs-plugins\32bit\win-capture.dll"
-  Delete "$INSTDIR\obs-plugins\32bit\win-decklink.dll"
-  Delete "$INSTDIR\obs-plugins\32bit\win-dshow.dll"
-  Delete "$INSTDIR\obs-plugins\32bit\win-mf.dll"
-  Delete "$INSTDIR\obs-plugins\32bit\win-wasapi.dll"
+  Delete "$INSTDIR\obs-plugins\64bit"
+  Delete "$INSTDIR\obs-plugins\64bit\coreaudio-encoder.dll"
+  Delete "$INSTDIR\obs-plugins\64bit\enc-amf.dll"
+  Delete "$INSTDIR\obs-plugins\64bit\frontend-tools.dll"
+  Delete "$INSTDIR\obs-plugins\64bit\image-source.dll"
+  Delete "$INSTDIR\obs-plugins\64bit\obs-ffmpeg.dll"
+  Delete "$INSTDIR\obs-plugins\64bit\obs-filters.dll"
+  Delete "$INSTDIR\obs-plugins\64bit\obs-outputs.dll"
+  Delete "$INSTDIR\obs-plugins\64bit\obs-qsv11.dll"
+  Delete "$INSTDIR\obs-plugins\64bit\obs-text.dll"
+  Delete "$INSTDIR\obs-plugins\64bit\obs-transitions.dll"
+  Delete "$INSTDIR\obs-plugins\64bit\obs-vst.dll"
+  Delete "$INSTDIR\obs-plugins\64bit\obs-x264.dll"
+  Delete "$INSTDIR\obs-plugins\64bit\rtmp-services.dll"
+  Delete "$INSTDIR\obs-plugins\64bit\text-freetype2.dll"
+  Delete "$INSTDIR\obs-plugins\64bit\websocketclient.dll"
+  Delete "$INSTDIR\obs-plugins\64bit\win-capture.dll"
+  Delete "$INSTDIR\obs-plugins\64bit\win-decklink.dll"
+  Delete "$INSTDIR\obs-plugins\64bit\win-dshow.dll"
+  Delete "$INSTDIR\obs-plugins\64bit\win-mf.dll"
+  Delete "$INSTDIR\obs-plugins\64bit\win-wasapi.dll"
 
-  RMDir "$INSTDIR\bin\32bit\platforms"
-  RMDir "$INSTDIR\bin\32bit\styles"
-  RMDir "$INSTDIR\bin\32bit"
+  RMDir "$INSTDIR\bin\64bit\platforms"
+  RMDir "$INSTDIR\bin\64bit\styles"
+  RMDir "$INSTDIR\bin\64bit"
   RMDir "$INSTDIR\bin"
   RMDir "$INSTDIR\cmake\LibObs"
   RMDir "$INSTDIR\cmake\w32-pthreads"
@@ -1968,7 +1968,7 @@ Section "Uninstall"
   RMDir "$INSTDIR\data\obs-plugins\win-wasapi\locale"
   RMDir "$INSTDIR\data\obs-plugins\win-wasapi"
   RMDir "$INSTDIR\data\obs-plugins"
-  RMDir "$INSTDIR\data\obs-scripting\32bit"
+  RMDir "$INSTDIR\data\obs-scripting\64bit"
   RMDir "$INSTDIR\data\obs-scripting"
   RMDir "$INSTDIR\data\obs-studio\license"
   RMDir "$INSTDIR\data\obs-studio\locale"
@@ -1988,7 +1988,7 @@ Section "Uninstall"
   RMDir "$INSTDIR\include\util\windows"
   RMDir "$INSTDIR\include\util"
   RMDir "$INSTDIR\include"
-  RMDir "$INSTDIR\obs-plugins\32bit"
+  RMDir "$INSTDIR\obs-plugins\64bit"
   RMDir "$INSTDIR\obs-plugins"
 
 
@@ -1999,13 +1999,13 @@ Section "Uninstall"
 
   ;Remove the uninstaller itself.
   Delete "$INSTDIR\Uninstall.exe"
-  DeleteRegKey SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\OBSStudio32"
+  DeleteRegKey SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\OBSStudio64"
 
   ;Remove the installation directory if it is empty.
   RMDir "$INSTDIR"
 
   ; Remove the registry entries.
-  DeleteRegKey SHCTX "Software\obsproject.com\OBSStudio32"
+  DeleteRegKey SHCTX "Software\obsproject.com\OBSStudio64"
 
   ; Removes all optional components
   !insertmacro SectionList "RemoveSection_CPack"
@@ -2013,9 +2013,9 @@ Section "Uninstall"
   !insertmacro MUI_STARTMENU_GETFOLDER Application $MUI_TEMP
 
   Delete "$SMPROGRAMS\$MUI_TEMP\Uninstall.lnk"
-  Delete "$SMPROGRAMS\$MUI_TEMP\OBS Studio.lnk"
+  Delete "$SMPROGRAMS\$MUI_TEMP\YouNow OBS Studio.lnk"
   StrCmp "$INSTALL_DESKTOP" "1" 0 +2
-    Delete "$DESKTOP\OBS Studio.lnk"
+    Delete "$DESKTOP\YouNow OBS Studio.lnk"
 
 
 
@@ -2051,7 +2051,7 @@ Section "Uninstall"
     StrCmp "$MUI_TEMP" "$SMPROGRAMS" secondStartMenuDeleteLoopDone secondStartMenuDeleteLoop
   secondStartMenuDeleteLoopDone:
 
-  DeleteRegKey /ifempty SHCTX "Software\obsproject.com\OBSStudio32"
+  DeleteRegKey /ifempty SHCTX "Software\obsproject.com\OBSStudio64"
 
   Push $INSTDIR\bin
   StrCmp $DO_NOT_ADD_TO_PATH_ "1" doNotRemoveFromPath 0
@@ -2072,11 +2072,11 @@ SectionEnd
 Function .onInit
   StrCmp "" "ON" 0 inst
 
-  ReadRegStr $0 HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\OBSStudio32" "UninstallString"
+  ReadRegStr $0 HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\OBSStudio64" "UninstallString"
   StrCmp $0 "" inst
 
   MessageBox MB_YESNOCANCEL|MB_ICONEXCLAMATION \
-  "OBS Studio (32bit) is already installed. $\n$\nDo you want to uninstall the old version before installing the new one?" \
+  "YouNow OBS Studio is already installed. $\n$\nDo you want to uninstall the old version before installing the new one?" \
   /SD IDYES IDYES uninst IDNO inst
   Abort
 
@@ -2102,14 +2102,14 @@ inst:
   ; install directory that is expected to be the
   ; default
   StrCpy $IS_DEFAULT_INSTALLDIR 0
-  StrCmp "$INSTDIR" "$PROGRAMFILES\OBS Studio (32bit)" 0 +2
+  StrCmp "$INSTDIR" "$PROGRAMFILES64\YouNow OBS Studio" 0 +2
     StrCpy $IS_DEFAULT_INSTALLDIR 1
 
   StrCpy $SV_ALLUSERS "JustMe"
   ; if default install dir then change the default
   ; if it is installed for JustMe
   StrCmp "$IS_DEFAULT_INSTALLDIR" "1" 0 +2
-    StrCpy $INSTDIR "$DOCUMENTS\OBS Studio (32bit)"
+    StrCpy $INSTDIR "$DOCUMENTS\YouNow OBS Studio"
 
   ClearErrors
   UserInfo::GetName
@@ -2135,7 +2135,7 @@ inst:
   done:
   StrCmp $SV_ALLUSERS "AllUsers" 0 +3
     StrCmp "$IS_DEFAULT_INSTALLDIR" "1" 0 +2
-      StrCpy $INSTDIR "$PROGRAMFILES\OBS Studio (32bit)"
+      StrCpy $INSTDIR "$PROGRAMFILES64\YouNow OBS Studio"
 
   StrCmp "" "ON" 0 noOptionsPage
     !insertmacro MUI_INSTALLOPTIONS_EXTRACT "NSIS.InstallOptions.ini"
