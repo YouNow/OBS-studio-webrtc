@@ -26,7 +26,7 @@ message(STATUS "ASIO Library at: " ${CMAKE_CURRENT_SOURCE_DIR} "/third_party/asi
 include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/third_party/asio/include )
 
 if( WIN32 )
-  include_directories( "C:/OpenSSL-Win32/include")
+  include_directories( "C:/OpenSSL-Win64/include")
 elseif ( APPLE )
   include_directories( /usr/local/opt/openssl@1.1/include)
 endif()
@@ -88,8 +88,8 @@ if ( APPLE )
   )
 elseif ( WIN32 )
   target_link_libraries( websocketclient
-    "c:/OpenSSL-WIN32/lib/libssl.lib"
-    "c:/OpenSSL-WIN32/lib/libcrypto.lib"
+    "c:/OpenSSL-WIN64/lib/libssl.lib"
+    "c:/OpenSSL-WIN64/lib/libcrypto.lib"
   )
 endif()
 
@@ -136,19 +136,19 @@ elseif ( APPLE )
     DESTINATION ${OBS_EXECUTABLE_DESTINATION} COMPONENT   Libraries )
 else ( WIN32 )
   install(
-    FILES       "c:/OpenSSL-WIN32/lib/libssl.lib"
+    FILES       "c:/OpenSSL-WIN64/lib/libssl.lib"
     DESTINATION ${OBS_EXECUTABLE_DESTINATION} COMPONENT   Libraries )
   install(
-    FILES       "c:/OpenSSL-WIN32/lib/libcrypto.lib"
+    FILES       "c:/OpenSSL-WIN64/lib/libcrypto.lib"
     DESTINATION ${OBS_EXECUTABLE_DESTINATION} COMPONENT   Libraries )
   install(
     FILES       "c:/dev/webrtc-checkout/src/out/Default/obj/webrtc.lib"
     DESTINATION ${OBS_EXECUTABLE_DESTINATION} COMPONENT   Libraries )
   install(
-    FILES       "c:/OpenSSL-WIN32/bin/libssl-1_1.dll"
+    FILES       "c:/OpenSSL-WIN64/bin/libssl-1_1.dll"
     DESTINATION ${OBS_EXECUTABLE_DESTINATION} COMPONENT   Libraries )
   install(
-    FILES       "c:/OpenSSL-WIN32/bin/libcrypto-1_1.dll"
+    FILES       "c:/OpenSSL-WIN64/bin/libcrypto-1_1.dll"
     DESTINATION ${OBS_EXECUTABLE_DESTINATION} COMPONENT   Libraries )
   
   if( EXISTS "${libwebrtc_rootdir}/bin/libssl-1_1-x64.dll" )
