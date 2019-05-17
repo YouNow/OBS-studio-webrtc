@@ -190,15 +190,6 @@ void AutoConfigTestPage::TestBandwidthThread()
 		case 1: serverType = "rtmp_custom";
 			break;
 
-		case 2: serverType = "webrtc_janus";
-			break;
-
-		case 3: serverType = "webrtc_spankchain";
-			break;
-
-		case 4: serverType = "webrtc_millicast";
-			break;
-
 		case 5: serverType = "younow";
 			blog(LOG_WARNING, "AutoConfigTestPage::TestBandwidthThread - webrtc_younow has been selected");
 			break;
@@ -972,15 +963,6 @@ void AutoConfigTestPage::FinalizeResults()
 				break;
 
 			case 1: serverType = "rtmp_custom";
-				break;
-
-			case 2: serverType = "webrtc_janus";
-				break;
-
-			case 3: serverType = "webrtc_spankchain";
-				break;
-
-			case 4: serverType = "webrtc_millicast";
 				break;
 
 			case 5: serverType = "younow";

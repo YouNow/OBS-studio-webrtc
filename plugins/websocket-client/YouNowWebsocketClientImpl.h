@@ -21,7 +21,7 @@ public:
     YouNowWebsocketClientImpl();
     ~YouNowWebsocketClientImpl();
     virtual bool connect(std::string url, long long room, std::string username, std::string token, WebsocketClient::Listener* listener);
-    virtual bool open(const std::string &sdp, const std::string& codec = "h264", const std::string& milliId = "");
+    virtual bool open(const std::string &sdp, const bool isJoin, const int maxBw);
     virtual bool trickle(const std::string &mid, int index, const std::string &candidate, bool last);
     virtual bool disconnect(bool wait);
 

@@ -7,9 +7,6 @@ set(rtmp-services_SOURCES
 	rtmp-common.c
 	rtmp-custom.c
 	rtmp-services-main.c
-	webrtc-janus.c
-	webrtc-spankchain.c
-	webrtc-millicast.c
 	younow.c
 	)
 

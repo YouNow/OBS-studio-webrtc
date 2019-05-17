@@ -655,13 +655,7 @@ bool SimpleOutput::StartStreaming(obs_service_t *service)
 	std:string typeCheck = obs_service_get_type(service);
 
 	if (!type) {
-		if(typeCheck.find("janus") != std::string::npos) {
-			type = "janus_output";
-		} else if (typeCheck.find("spankchain") != std::string::npos) {
-			type = "spankchain_output";
-		} else if (typeCheck.find("millicast") != std::string::npos) {
-			type = "millicast_output";
-		} else if (typeCheck.find("younow") != std::string::npos) {
+		if (typeCheck.find("younow") != std::string::npos) {
 			blog(LOG_WARNING, "windows-basic-main-outputs.cpp: younow_ouput type selected in SimpleOutput::StartStreaming");
 			type = "younow_output";
 		} else {
@@ -698,6 +692,7 @@ bool SimpleOutput::StartStreaming(obs_service_t *service)
 		stopStreaming.Connect(
 				obs_output_get_signal_handler(streamOutput),
 				"stop", OBSStopStreaming, this);
+
 
 		const char *codec =
 			obs_output_get_supported_audio_codecs(streamOutput);
@@ -1432,13 +1427,7 @@ bool AdvancedOutput::StartStreaming(obs_service_t *service)
 	std:string typeCheck = obs_service_get_type(service);
 
 	if (!type) {
-		if(typeCheck.find("janus") != std::string::npos) {
-			type = "janus_output";
-		} else if (typeCheck.find("spankchain") != std::string::npos) {
-			type = "spankchain_output";
-		} else if (typeCheck.find("millicast") != std::string::npos) {
-			type = "millicast_output";
-		} else if (typeCheck.find("younow") != std::string::npos) {
+		if (typeCheck.find("younow") != std::string::npos) {
 			blog(LOG_WARNING, "windows-basic-main-outputs.cpp: younow_ouput type selected in AdvancedOutput::StartStreaming");
 			type = "younow_output";
 		} else {

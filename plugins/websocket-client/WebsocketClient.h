@@ -18,9 +18,6 @@
 
 #include <string>
 
-#define WEBSOCKETCLIENT_JANUS      0
-#define WEBSOCKETCLIENT_SPANKCHAIN 1
-#define WEBSOCKETCLIENT_MILLICAST  2
 #define WEBSOCKETCLIENT_YOUNOW  3
 
 class WEBSOCKETCLIENT_API WebsocketClient
@@ -39,7 +36,7 @@ public:
   };
 public:
   virtual bool connect(std::string url, long long room, std::string username, std::string token, Listener* listener) = 0;
-  virtual bool open(const std::string &sdp, const std::string& codec = "vp8", const std::string& milliId = "" ) = 0;
+  virtual bool open(const std::string &sdp, const bool isJoin, const int maxBw ) = 0;
   virtual bool trickle(const std::string &mid, int index, const std::string &candidate, bool last) = 0;
   virtual bool disconnect(bool wait) = 0;
 

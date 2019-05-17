@@ -20,14 +20,25 @@ else()
 endif()
 
 # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fexceptions -frtti")
+if ( APPLE ) 
+  include_directories("/Users/erankalmanson/dev/webrtc-checkout/src")
+  include_directories("/Users/erankalmanson/dev/webrtc-checkout/src/third_party")
+  include_directories("/Users/erankalmanson/dev/webrtc-checkout/src/third_party/abseil-cpp")
+  include_directories("/Users/erankalmanson/dev/webrtc-checkout/src/third_party/libyuv/include")
 
-include_directories("/Users/erankalmanson/dev/webrtc-checkout/src")
-include_directories("/Users/erankalmanson/dev/webrtc-checkout/src/third_party")
-include_directories("/Users/erankalmanson/dev/webrtc-checkout/src/third_party/abseil-cpp")
-include_directories("/Users/erankalmanson/dev/webrtc-checkout/src/third_party/libyuv/include")
+  add_definitions(-DWEBRTC_MAC)
+  add_definitions(-DWEBRTC_POSIX)
+elseif ( WIN32 )
+  include_directories("c:/dev/webrtc-checkout/src")
+  include_directories("c:/dev/webrtc-checkout/src/third_party")
+  include_directories("c:/dev/webrtc-checkout/src/third_party/abseil-cpp")
+  include_directories("c:/dev/webrtc-checkout/src/third_party/libyuv/include")
 
-add_definitions(-DWEBRTC_MAC)
-add_definitions(-DWEBRTC_POSIX)
+  add_definitions(-DWEBRTC_WIN32)
+  add_definitions(-DWEBRTC_WIN)
+  add_definitions(-DNOMINMAX)
+  add_definitions(-DWIN32_LEAN_AND_MEAN)
+endif()
 
 # --- Find libwebrtc or fail early
 if( WIN32 )
@@ -39,8 +50,6 @@ if( WIN32 )
   set(WEBRTC_USE_FILE_INCLUDED 0)
 endif()
 #find_package(libwebrtc 65 REQUIRED)
-
-
 
 if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/ftl-sdk/CMakeLists.txt")
   find_package(Libcurl REQUIRED)
@@ -108,7 +117,9 @@ if(WIN32)
     ws2_32
     winmm
     Iphlpapi
+    "c:/dev/webrtc-checkout/src/out/Default/obj/webrtc.lib"
   )
+
   if(MSVC)
     set( obs-outputs_PLATFORM_DEPS ${obs-outputs_PLATFORM_DEPS} w32-pthreads )
   endif()
@@ -132,15 +143,15 @@ elseif( APPLE )
     ${AVFOUNDATION}
     ${COCOA}
     # ${CORESERVICE}
-  	${COREFOUNDATION}
+    ${COREFOUNDATION}
     ${AUDIOUNIT}
     ${AUDIOTOOLBOX}
-  	${COREMEDIA}
-  	${COREVIDEO}
+    ${COREMEDIA}
+    ${COREVIDEO}
     ${COREAUDIO}
     ${COREMEDIAIO}
     ${FOUNDATION_FRAMEWORK}
-	  ${SECURITY_FRAMEWORK}
+    ${SECURITY_FRAMEWORK}
     /Users/erankalmanson/dev/webrtc-checkout/src/out/Default/obj/libwebrtc.a )
 endif()
 
@@ -172,9 +183,6 @@ set( obs-outputs_HEADERS
   flv-mux.h
   rtmp-helpers.h
   rtmp-stream.h
-  janus-stream.h
-  spankchain-stream.h
-  millicast-stream.h
   younow-stream.h
   net-if.h
   AudioDeviceModuleWrapper.h
@@ -187,9 +195,6 @@ set( obs-outputs_HEADERS
 set( obs-outputs_SOURCES
   obs-outputs.c
   rtmp-stream.c
-  janus-stream.cpp
-  spankchain-stream.cpp
-  millicast-stream.cpp
   younow-stream.cpp
   rtmp-windows.c
   AudioDeviceModuleWrapper.cpp
@@ -215,13 +220,13 @@ target_link_libraries( obs-outputs
   ${AVFOUNDATION}
   ${COCOA}
   # ${CORESERVICE}
-	${COREFOUNDATION}
+  ${COREFOUNDATION}
   ${AUDIOUNIT}
   ${AUDIOTOOLBOX}
-	${COREMEDIA}
-	${COREVIDEO}
+  ${COREMEDIA}
+  ${COREVIDEO}
   ${COREAUDIO}
-	${COREMEDIAIO}
+  ${COREMEDIAIO}
   ${obs-outputs_PLATFORM_DEPS}
   libobs
   websocketclient

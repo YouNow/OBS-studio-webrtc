@@ -51,7 +51,7 @@ static obs_properties_t *younow_properties(void *unused)
   UNUSED_PARAMETER(unused);
 
   obs_properties_t *ppts = obs_properties_create();
-  obs_properties_add_text(ppts, "token", obs_module_text("Publishing token"), OBS_TEXT_PASSWORD);
+  obs_properties_add_text(ppts, "token", obs_module_text("Stream Key"), OBS_TEXT_PASSWORD);
   
   return ppts;
 }

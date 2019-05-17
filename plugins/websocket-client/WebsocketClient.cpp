@@ -1,8 +1,5 @@
 #include <obs-module.h>
 #include <openssl/opensslv.h>
-#include "JanusWebsocketClientImpl.h"
-#include "SpankChainWebsocketClientImpl.h"
-#include "MillicastWebsocketClientImpl.h"
 #include "YouNowWebsocketClientImpl.h"
 
 OBS_DECLARE_MODULE()
@@ -15,13 +12,12 @@ bool obs_module_load(void)
 
 WEBSOCKETCLIENT_API WebsocketClient* createWebsocketClient(int type)
 {
-  if (type == WEBSOCKETCLIENT_JANUS)
-    return new JanusWebsocketClientImpl();
-  if (type == WEBSOCKETCLIENT_SPANKCHAIN)
-    return new SpankChainWebsocketClientImpl();
-  if (type == WEBSOCKETCLIENT_MILLICAST)
-    return new MillicastWebsocketClientImpl();
-  if (type == WEBSOCKETCLIENT_YOUNOW)
-    return new YouNowWebsocketClientImpl();
+	if (type == WEBSOCKETCLIENT_YOUNOW) {
+		std::cout << "WebsocketClient: YOUNOW";
+		return new YouNowWebsocketClientImpl();
+	}
+	else {
+		std::cout << "WebsocketClient: NULL";
+	}
   return nullptr;
 }

@@ -548,5 +548,6 @@ extern "C" void InitScripts()
 	obs_frontend_add_preload_callback(load_script_data, nullptr);
 	obs_frontend_add_event_callback(obs_event, nullptr);
 
-	action->connect(action, &QAction::triggered, cb);
+	// ERAN - what happened here?
+	//action->connect(action, &QAction::triggered, cb);
 }

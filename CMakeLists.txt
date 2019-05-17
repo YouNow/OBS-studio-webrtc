@@ -61,6 +61,8 @@ elseif(MSVC)
 
 	# Disable pointless constant condition warnings
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4127 /wd4201")
+
+
 endif()
 
 if(WIN32)
@@ -76,6 +78,8 @@ if(MSVC)
 		set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /SAFESEH:NO")
 		set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} /SAFESEH:NO")
 	endif()
+
+
 else()
 	if(MINGW)
 		set(CMAKE_WIDL "widl" CACHE STRING "wine IDL header file generation program")

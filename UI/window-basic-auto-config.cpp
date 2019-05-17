@@ -30,7 +30,7 @@ static OBSData OpenServiceSettings(std::string &type)
 			"bak");
 	obs_data_release(data);
 
-	obs_data_set_default_string(data, "type", "rtmp_common");
+	obs_data_set_default_string(data, "type", "younow");
 	type = obs_data_get_string(data, "type");
 
 	OBSData settings = obs_data_get_obj(data, "settings");
@@ -218,12 +218,9 @@ AutoConfigStreamPage::AutoConfigStreamPage(QWidget *parent)
 	ui->bitrateLabel->setVisible(false);
 	ui->bitrate->setVisible(false);
 
+	ui->streamType->addItem(obs_service_get_display_name("younow"));
 	ui->streamType->addItem(obs_service_get_display_name("rtmp_common"));
 	ui->streamType->addItem(obs_service_get_display_name("rtmp_custom"));
-	ui->streamType->addItem(obs_service_get_display_name("webrtc_janus"));
-	ui->streamType->addItem(obs_service_get_display_name("webrtc_spankchain"));
-	ui->streamType->addItem(obs_service_get_display_name("webrtc_millicast"));
-	ui->streamType->addItem(obs_service_get_display_name("younow"));
 
 	setTitle(QTStr("Basic.AutoConfig.StreamPage"));
 	setSubTitle(QTStr("Basic.AutoConfig.StreamPage.SubTitle"));
@@ -289,16 +286,7 @@ bool AutoConfigStreamPage::validatePage()
 		
 		case 1: serverType = "rtmp_custom";
 			break;
-		
-		case 2: serverType = "webrtc_janus";
-			break;
 
-		case 3: serverType = "webrtc_spankchain";
-			break;
-
-		case 4: serverType = "webrtc_millicast";
-			break;
-		
 		case 5: serverType = "younow";
 			break;
 
@@ -423,43 +411,6 @@ void AutoConfigStreamPage::ServiceChanged()
 		ui->streamKeyLabel->setVisible(true);
 		ui->key->setVisible(true);
 		ui->show->setVisible(true);
-	} else if (ui->streamType->currentIndex() == 2) { //webrtc_janus
-		ui->formLayout->insertRow(1, ui->serverLabel,
-				ui->serverStackedWidget);
-
-		ui->region->setVisible(false);
-		ui->serverStackedWidget->setCurrentIndex(1);
-		ui->serverStackedWidget->setVisible(true);
-		ui->serverLabel->setVisible(true);
-
-		ui->streamKeyLabel->setVisible(true);
-		ui->key->setVisible(true);
-		ui->show->setVisible(true);
-	} else if (ui->streamType->currentIndex() == 3) { //webrtc_spankchain
-		ui->formLayout->insertRow(1, ui->serverLabel,
-		ui->serverStackedWidget);
-
-		ui->region->setVisible(false);
-		ui->serverStackedWidget->setCurrentIndex(1);
-		ui->serverStackedWidget->setVisible(true);
-		ui->serverLabel->setVisible(true);
-
-		ui->streamKeyLabel->setVisible(true);
-		ui->key->setVisible(true);
-		ui->show->setVisible(true);
-	} else if (ui->streamType->currentIndex() == 4)	{ //webrtc_millicast
-		ui->formLayout->insertRow(1, ui->serverLabel,
-					  ui->serverStackedWidget);
-
-		ui->region->setVisible(false);
-		ui->serverStackedWidget->setCurrentIndex(1);
-		ui->serverStackedWidget->setVisible(true);
-		ui->serverLabel->setVisible(true);
-
-		ui->streamKeyLabel->setVisible(true);
-		ui->key->setVisible(true);
-		ui->show->setVisible(true);
-	
 	} else if (ui->streamType->currentIndex() == 5)	{ //younow
 		blog(LOG_WARNING, "AutoConfigStreamPage::ServiceChanged - webrtc_younow has been selected");
 
@@ -705,12 +656,6 @@ AutoConfig::AutoConfig(QWidget *parent)
 		customServer = 0;
 	} else if (serviceType.compare("rtmp_custom") == 0) {
 		customServer = 1;
-	} else if (serviceType.compare("webrtc_janus") == 0) {
-		customServer = 2;
-	} else if (serviceType.compare("webrtc_spankchain") == 0) {
-		customServer = 3;
-	} else if (serviceType.compare("webrtc_millicast") == 0) {
-		customServer = 4;
 	} else if (serviceType.compare("younow") == 0) {
 		customServer = 5;
 	} else {
@@ -884,13 +829,6 @@ void AutoConfig::SaveStreamSettings()
 		case 1: service_id = "rtmp_custom";
 			break;
 
-		case 2: service_id = "webrtc_janus";
-			break;
-
-		case 3: service_id = "webrtc_spankchain";
-			break;
-		case 4: service_id = "webrtc_millicast";
-			break;
 		case 5: service_id = "younow";
 			blog(LOG_WARNING, "AutoConfig::SaveStreamSettings - webrtc_younow has been selected");
 			break;

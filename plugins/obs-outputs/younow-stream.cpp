@@ -159,7 +159,7 @@ extern "C" {
     nullptr, ////free_type_data
     younow_stream_congestion, //get_congestion
     nullptr, //get_connect_time_ms
-    "vp8", //encoded_video_codecs //NOTE ALEX: I don t think it matters since webrtc is handling it.
+    "h264", //encoded_video_codecs //NOTE ALEX: I don t think it matters since webrtc is handling it.
     "opus" //encoded_audio_codecs
   };
 }
