@@ -53,7 +53,7 @@ bool YouNowWebsocketClientImpl::connect(std::string url, long long room, std::st
 
     streamKey = token;
 
-    std::string signaling_url = "wss://signaling.younow-prod.video.propsproject.com";
+    std::string signaling_url = "wss://signaling.younow-play.video.propsproject.com";
 
     std::size_t i = streamKey.find('_');
     userId = streamKey.substr(0, i);
@@ -75,7 +75,6 @@ bool YouNowWebsocketClientImpl::connect(std::string url, long long room, std::st
       connection->set_close_handshake_timeout(5000);
     } else {
       info("YouNowWebsocketClientImpl::connection is null");
-      return 0;
     }
 
     if (ec)
@@ -182,7 +181,7 @@ bool YouNowWebsocketClientImpl::connect(std::string url, long long room, std::st
   }
   catch (websocketpp::exception const &e)
   {
-    std::cout << e.what() << std::endl;
+    error("YouNowWebsocketClientImpl::connect: Exception: %s", e.what());
     return false;
   }
   // OK
@@ -288,37 +287,47 @@ bool YouNowWebsocketClientImpl::trickle(const std::string &mid, int index, const
 
 bool YouNowWebsocketClientImpl::disconnect(bool wait)
 {
+  info("YouNowWebsocketClientImpl: Start");
   websocketpp::lib::error_code ec;
   if (!connection)
   {
     return true;
   }
 
+  info("YouNowWebsocketClientImpl: Still connected");
+
   try
   {
-    json close = {
-        {"type", "cmd"},
-        {"name", "unpublish"},
-    };
+    // json close = {
+    //     {"type", "cmd"},
+    //     {"name", "unpublish"},
+    // };
 
-    if (connection->send(close.dump()))
-      return false;
+    // if (connection->send(close.dump()))
+    //   return false;
 
     // wait for unpublish message is sent
-    std::this_thread::sleep_for(std::chrono::seconds(2));
+    // std::this_thread::sleep_for(std::chrono::seconds(2));
 
+    info("YouNowWebsocketClientImpl: Close");
     client.close(connection, websocketpp::close::status::normal, "", ec);
+    
+    info("YouNowWebsocketClientImpl: Stop");
     client.stop();
 
+    info("YouNowWebsocketClientImpl: Remove handlers");
     client.set_open_handler([](...) {});
     client.set_close_handler([](...) {});
     client.set_fail_handler([](...) {});
+    
+    info("YouNowWebsocketClientImpl: Detaching thread");
     //Detach trhead
     thread.detach();
+    info("YouNowWebsocketClientImpl: Detached thread");
   }
   catch (websocketpp::exception const &e)
   {
-    std::cout << e.what() << std::endl;
+    info("YouNowWebsocketClientImpl: Exception:", e.what());
     return false;
   }
 
