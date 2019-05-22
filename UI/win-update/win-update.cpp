@@ -554,12 +554,17 @@ try {
 
 	auto ActiveOrGameCaptureLocked = [this] ()
 	{
+		blog(LOG_WARNING, "%s: ActiveOrGameCapturedLocked - enter", __FUNCTION__);
+
 		if (video_output_active(obs_get_video())) {
 			if (manualUpdate)
 				info(QTStr("Updater.Running.Title"),
 				     QTStr("Updater.Running.Text"));
 			return true;
 		}
+
+		blog(LOG_WARNING, "%s: ActiveOrGameCapturedLocked - post video check", __FUNCTION__);
+
 		if (IsGameCaptureInUse()) {
 			if (manualUpdate)
 				info(QTStr("Updater.GameCaptureActive.Title"),
@@ -567,8 +572,12 @@ try {
 			return true;
 		}
 
+		blog(LOG_WARNING, "%s: ActiveOrGameCapturedLocked - ", __FUNCTION__);
+
 		return false;
 	};
+
+	blog(LOG_WARNING, "%s: Pre warnings", __FUNCTION__);
 
 	/* ----------------------------------- *
 	 * warn if running or gc locked        */

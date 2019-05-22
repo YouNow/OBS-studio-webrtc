@@ -432,8 +432,8 @@ void WebRTCStream::onOpened(const std::string &sdp)
     // //modify bitrate
     // SDPModif::bitrateSDP(sdpNotConst, bitrate_settings);
 
-    // // Enable stereo
-    // SDPModif::stereoSDP(sdpNotConst);
+    // Enable stereo
+    SDPModif::stereoSDP(sdpNotConst);
     
     webrtc::SdpParseError error;
     webrtc::SessionDescriptionInterface* answer = webrtc::CreateSessionDescription(webrtc::SessionDescriptionInterface::kAnswer, sdp, &error);    
