@@ -1,8 +1,13 @@
 cmake_minimum_required(VERSION 2.8.12)
 
+# set(CMAKE_OSX_SYSROOT macosx10.13)
+# set(CMAKE_OSX_DEPLOYMENT_TARGET "10.10")
+
 project(obs-studio)
 
 option(BUILD_CAPTIONS "Build captions" FALSE)
+#set(CMAKE_OSX_SYSROOT="/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.13.sdk/")
+set(CMAKE_OSX_DEPLOYMENT_TARGET="10.10")
 
 if(WIN32)
 	if (QTDIR OR DEFINED ENV{QTDIR} OR DEFINED ENV{QTDIR32} OR DEFINED ENV{QTDIR64})
