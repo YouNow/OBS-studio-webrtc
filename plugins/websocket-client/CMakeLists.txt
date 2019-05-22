@@ -83,13 +83,13 @@ if ( APPLE )
   target_link_libraries( websocketclient
     /usr/local/opt/openssl@1.1/lib/libssl.1.1.dylib
     /usr/local/opt/openssl@1.1/lib/libcrypto.1.1.dylib
-    # /usr/local/lib/libssl.dylib
-    # /usr/local/lib/libcrypto.dylib
+    libobs
   )
 elseif ( WIN32 )
   target_link_libraries( websocketclient
     "c:/OpenSSL-WIN32/lib/libssl.lib"
     "c:/OpenSSL-WIN32/lib/libcrypto.lib"
+    libobs
   )
 endif()
 

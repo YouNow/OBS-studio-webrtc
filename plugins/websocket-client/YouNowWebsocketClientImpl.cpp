@@ -61,24 +61,26 @@ bool YouNowWebsocketClientImpl::connect(std::string url, long long room, std::st
     std::string wss = signaling_url + "/?peerId=" + peerId + "&streamKey=" + token + "&isHost=true";
 
     // Create websocket connection and add token and callback parameters
-    std::cout << "YouNowWebsocketClientImpl::connect: Connection URL: " << wss << std::endl;
+    info("YouNowWebsocketClientImpl::connect: Connection URL: %s", wss.c_str());
 
     // Get connection
     this->connection = client.get_connection(wss, ec);
 
-    std::cout << "YouNowWebsocketClientImpl::connect: get_connection called" << std::endl;
+    info("YouNowWebsocketClientImpl::connect: get_connection called");
 
     if (!this->connection)
     {
-      std::cout << "Print NOT NULLL" << std::endl;
+      info("YouNowWebsocketClientImpl::connected");
+
       connection->set_close_handshake_timeout(5000);
     } else {
-      std::cout << "YouNowWebsocketClientImpl::connection is null" << std::endl;;
+      info("YouNowWebsocketClientImpl::connection is null");
+      return 0;
     }
 
     if (ec)
     {
-      std::cout << "could not create connection because: " << ec.message() << std::endl;
+      info("could not create connection because: %s",ec.message().c_str());
       return 0;
     }
     // Register our message handler

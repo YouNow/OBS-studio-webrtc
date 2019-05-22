@@ -12,6 +12,13 @@
 #include "websocketpp/config/asio_client.hpp"
 #include "websocketpp/client.hpp"
 
+#include "obs.h"
+
+
+#define warn(format, ...)  blog(LOG_WARNING, format, ##__VA_ARGS__)
+#define info(format, ...)  blog(LOG_INFO,    format, ##__VA_ARGS__)
+#define debug(format, ...) blog(LOG_DEBUG,   format, ##__VA_ARGS__)
+#define error(format, ...) blog(LOG_ERROR,   format, ##__VA_ARGS__)
 
 typedef websocketpp::client<websocketpp::config::asio_tls_client> Client;
 

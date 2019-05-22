@@ -18,7 +18,6 @@
 #include "rtc_base/checks.h"
 #include "rtc_base/criticalsection.h"
 
-//#include "pc/peerconnectionwrapper.h"
 #include "pc/rtcstatscollector.h"
 
 #define warn(format, ...)  blog(LOG_WARNING, format, ##__VA_ARGS__)
@@ -284,7 +283,7 @@ bool WebRTCStream::start(Type type)
         info("info: WebRTCStream::start:connecting to [url:%s, token :%s]", url.c_str(), milliToken.c_str());
         if(!client->connect(url, room, username, milliToken , this)){
             //Error
-	    info("info: WebRTCStream::start: failed connecting");
+	        info("info: WebRTCStream::start: failed connecting");
 
             obs_output_signal_stop(output, OBS_OUTPUT_CONNECT_FAILED);
             return false;
