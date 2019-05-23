@@ -41,7 +41,7 @@ def add_boolean_argument(parser, name, default=False):
     group.add_argument('--no' + name, dest=name, action='store_false')
 
 parser = argparse.ArgumentParser(description='obs-studio package util')
-parser.add_argument('-d', '--base-dir', dest='dir', default='rundir/RELEASE')
+parser.add_argument('-d', '--base-dir', dest='dir', default='rundir/RelWithDebInfo')
 parser.add_argument('-n', '--build-number', dest='build_number', default='0')
 parser.add_argument('-k', '--public-key', dest='public_key', default='OBSPublicDSAKey.pem')
 parser.add_argument('-f', '--sparkle-framework', dest='sparkle', default=None)
@@ -73,8 +73,8 @@ def add(name, external=False, copy_as=None):
 		name = build_path+"/"+name
 	if ("cosmo" in name):
 		name = "/usr/local/lib/" + name.split("/")[len(name.split("/")) - 1]
-		print "COSMO LIB FOUND - Replacing /Users/cosmo/ path with /usr/local/lib/"
-		print name
+		print ("COSMO LIB FOUND - Replacing /Users/cosmo/ path with /usr/local/lib/")
+		print (name)
 	t = LibTarget(name, external, copy_as)
 	if t in inspected:
 		return
@@ -131,7 +131,7 @@ while inspect:
 		new = line.strip().split(" (")[0]
 		if '@' in new and "sparkle.framework" in new.lower():
 			actual_sparkle_path = new
-			print "Using sparkle path:", repr(actual_sparkle_path)
+			print ("Using sparkle path:", repr(actual_sparkle_path))
 		if not new or new[0] == "@" or new.endswith(path.split("/")[-1]):
 			continue
 		whitelisted = False
@@ -188,14 +188,14 @@ try:
 except:
 	pass
 
-if args.sparkle is not None:
-    copytree(args.sparkle, "tmp/Contents/Frameworks/Sparkle.framework", symlinks=True)
+#if args.sparkle is not None:
+#    copytree(args.sparkle, "tmp/Contents/Frameworks/Sparkle.framework", symlinks=True)
 
 prefix = "tmp/Contents/Resources/"
-sparkle_path = '@loader_path/{0}/Frameworks/Sparkle.framework/Versions/A/Sparkle'
+#sparkle_path = '@loader_path/{0}/Frameworks/Sparkle.framework/Versions/A/Sparkle'
 
-cmd('{0}install_name_tool -change {1} {2} {3}/bin/obs'.format(
-    args.prefix, actual_sparkle_path, sparkle_path.format('../..'), prefix))
+#cmd('{0}install_name_tool -change {1} {2} {3}/bin/obs'.format(
+#    args.prefix, actual_sparkle_path, sparkle_path.format('../..'), prefix))
 
 
 
